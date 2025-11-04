@@ -223,12 +223,18 @@
         // コード一覧の読み込み
         async function loadCodes() {
             try {
+                console.log('Loading codes...');
                 const { data, error } = await supabaseClient
                     .from('access_codes')
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error:', error);
+                    throw error;
+                }
+
+                console.log('Codes loaded:', data);
 
                 const tbody = document.getElementById('codesTableBody');
                 tbody.innerHTML = '';
@@ -279,16 +285,34 @@
         // アクセスログの読み込み
         async function loadLogs() {
             try {
+                console.log('Loading access logs...');
                 const { data, error } = await supabaseClient
                     .from('access_logs')
                     .select('*')
                     .order('accessed_at', { ascending: false })
                     .limit(50);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Logs error:', error);
+                    // エラーがあってもログセクションは表示
+                    document.getElementById('logsTableBody').innerHTML =
+                        '<tr><td colspan="3" class="text-center py-4 text-gray-500">ログデータはまだありません</td></tr>';
+                    document.getElementById('totalAccessCount').textContent = '0';
+                    document.getElementById('todayAccessCount').textContent = '0';
+                    return;
+                }
+
+                console.log('Logs loaded:', data ? data.length : 0, 'records');
 
                 const tbody = document.getElementById('logsTableBody');
                 tbody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">まだアクセスログはありません</td></tr>';
+                    document.getElementById('totalAccessCount').textContent = '0';
+                    document.getElementById('todayAccessCount').textContent = '0';
+                    return;
+                }
 
                 data.forEach(log => {
                     const row = document.createElement('tr');
@@ -380,6 +404,8 @@
             const description = document.getElementById('newDescription').value;
             const expiresAt = document.getElementById('newExpiresAt').value;
 
+            console.log('Adding new code:', code);
+
             try {
                 const insertData = {
                     code,
@@ -391,11 +417,19 @@
                     insertData.expires_at = new Date(expiresAt).toISOString();
                 }
 
-                const { error } = await supabaseClient
-                    .from('access_codes')
-                    .insert([insertData]);
+                console.log('Insert data:', insertData);
 
-                if (error) throw error;
+                const { data, error } = await supabaseClient
+                    .from('access_codes')
+                    .insert([insertData])
+                    .select();
+
+                if (error) {
+                    console.error('Insert error:', error);
+                    throw error;
+                }
+
+                console.log('Code added successfully:', data);
 
                 hideAddCodeModal();
                 loadCodes();
