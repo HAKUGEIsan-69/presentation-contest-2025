@@ -147,7 +147,7 @@
                 sessionStorage.setItem('accessCode', data.code);
 
                 // メインページへリダイレクト
-                window.location.href = './index.html';
+                window.location.href = './main.html';
 
             } catch (error) {
                 // エラーメッセージを表示
@@ -185,7 +185,7 @@
 
                 // 24時間以内の認証は有効
                 if (hoursDiff < 24) {
-                    window.location.href = './index.html';
+                    window.location.href = './main.html';
                 } else {
                     sessionStorage.removeItem('authenticated');
                     sessionStorage.removeItem('authTime');
