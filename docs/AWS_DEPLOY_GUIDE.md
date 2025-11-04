@@ -133,7 +133,7 @@ chmod +x setup-cloudfront.sh
 
 現在設定されている管理者パスワード:
 ```
-[REDACTED]
+[SUPABASE_AUTH]
 ```
 
 このパスワードは十分強固ですが、定期的な変更を推奨します。
