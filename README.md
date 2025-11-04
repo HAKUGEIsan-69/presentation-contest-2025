@@ -12,14 +12,25 @@
 
 ```
 /
+├── index.html          # トップページ（login.htmlへリダイレクト）
 ├── login.html          # ログインページ（Supabase認証）
-├── index.html          # メインサイト
+├── main.html           # メインコンテンツ
 ├── presenters.html     # 登壇者紹介ページ
 ├── admin.html          # 管理画面（アクセスコード管理）
+├── qr-generator.html   # QRコード生成ツール
 ├── download.MP4        # オープニング動画
-├── supabase_setup.sql  # Supabaseテーブル作成SQL
-├── SUPABASE_SETUP.md   # Supabaseセットアップガイド
-└── *.txt              # プレゼン資料・台本
+├── docs/               # ドキュメント
+│   ├── AWS_DEPLOY_GUIDE.md
+│   ├── GITHUB_DEPLOY.md
+│   ├── QUICKSTART.md
+│   └── SUPABASE_SETUP.md
+├── scripts/            # デプロイスクリプト・SQL
+│   ├── aws-deploy.sh
+│   ├── cloudformation-template.yaml
+│   ├── supabase_setup.sql
+│   └── supabase_fix.sql
+└── resources/          # プレゼン資料・台本
+    └── *.txt
 ```
 
 ## 主な機能
@@ -64,7 +75,7 @@
 #### 1.1 テーブルの作成
 1. [Supabase Dashboard](https://app.supabase.com)にログイン
 2. SQL Editorを開く
-3. `supabase_setup.sql`の内容を実行
+3. `scripts/supabase_setup.sql`の内容を実行
 4. 初期データが登録されることを確認
 
 #### 1.2 接続情報の更新（既に設定済み）

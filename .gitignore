@@ -6,9 +6,11 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
 # Windows files
 *.Zone.Identifier
+*:Zone.Identifier
 
 # IDE files
 .vscode/
