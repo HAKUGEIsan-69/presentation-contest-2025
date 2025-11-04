@@ -25,25 +25,43 @@
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
+            line-height: 1.8;
+            letter-spacing: 0.02em;
         }
 
-        /* カスタムカラー */
+        /* モダン・ミニマルカラーパレット */
         :root {
             --warm-orange: #FF6B35;
             --natural-green: #8BC34A;
             --earth-brown: #795548;
+
+            /* モダンカラー */
+            --minimal-gray: #F8F9FA;
+            --minimal-dark: #2C2C2C;
+            --minimal-accent: #FF6B35;
+            --minimal-light: #FFFFFF;
+            --minimal-shadow: rgba(0, 0, 0, 0.08);
         }
 
-        /* スクロールバー */
+        /* スムーズスクロール */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 洗練されたスクロールバー */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: var(--minimal-gray);
         }
         ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--warm-orange), #FF8F5A);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
             background: var(--warm-orange);
-            border-radius: 5px;
         }
 
         /* ローディングアニメーション */
@@ -92,7 +110,37 @@
             50% { transform: translateY(-20px); }
         }
 
-        /* 五感の円 */
+        /* ガラスモーフィズム効果 */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 var(--minimal-shadow);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* モダンカードデザイン */
+        .modern-card {
+            background: var(--minimal-light);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 4px 24px var(--minimal-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modern-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 五感の円（改良版） */
         .sense-circle {
             width: 120px;
             height: 120px;
@@ -102,13 +150,52 @@
             justify-content: center;
             font-weight: bold;
             color: white;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sense-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .sense-circle:hover::before {
+            opacity: 1;
         }
 
         .sense-circle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* マイクロアニメーション */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* スムーズなボタントランジション */
+        button, a {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* 動画オーバーレイ */
@@ -135,7 +222,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body style="background-color: var(--minimal-light);">
 
     <!-- 動画オーバーレイ（15秒のオープニング） -->
     <div id="videoOverlay">
@@ -168,25 +255,43 @@
     <!-- メインコンテンツ -->
     <div id="mainContent" class="opacity-0">
 
-        <!-- ナビゲーション -->
-        <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-50">
+        <!-- ナビゲーション（ガラスモーフィズム） -->
+        <nav class="fixed top-0 w-full glass z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
+                <div class="flex justify-between items-center h-20">
                     <div class="flex items-center">
-                        <span class="text-xl font-bold" style="color: var(--warm-orange);">
+                        <span class="text-xl font-bold tracking-tight" style="color: var(--minimal-dark);">
                             五感でつながる子どもたち
                         </span>
                     </div>
                     <div class="hidden md:flex space-x-8">
-                        <a href="#hero" class="nav-link text-gray-700 hover:text-orange-500 transition">ホーム</a>
-                        <a href="#problem" class="nav-link text-gray-700 hover:text-orange-500 transition">問題提起</a>
-                        <a href="#solution" class="nav-link text-gray-700 hover:text-orange-500 transition">ソリューション</a>
-                        <a href="#impact" class="nav-link text-gray-700 hover:text-orange-500 transition">インパクト</a>
-                        <a href="#thoughts" class="nav-link text-gray-700 hover:text-orange-500 transition">高校生の思い</a>
-                        <a href="./presenters.html" class="nav-link text-gray-700 hover:text-orange-500 transition">登壇者紹介</a>
+                        <a href="#hero" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            ホーム
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
+                        <a href="#problem" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            問題提起
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
+                        <a href="#solution" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            ソリューション
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
+                        <a href="#impact" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            インパクト
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
+                        <a href="#thoughts" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            高校生の思い
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
+                        <a href="./presenters.html" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            登壇者紹介
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
                     </div>
                     <!-- モバイルメニューボタン -->
-                    <button id="mobileMenuBtn" class="md:hidden">
+                    <button id="mobileMenuBtn" class="md:hidden text-gray-600 hover:text-orange-500">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
@@ -211,16 +316,16 @@
         </div>
 
         <!-- ヒーローセクション -->
-        <section id="hero" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
-            <div class="absolute inset-0 gradient-orange opacity-10"></div>
+        <section id="hero" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+            <div class="absolute inset-0 gradient-orange opacity-5"></div>
             <div class="container mx-auto px-4 text-center relative z-10">
-                <h1 class="hero-title text-5xl md:text-7xl font-bold mb-6">
+                <h1 class="hero-title text-6xl md:text-8xl font-bold mb-8 tracking-tight" style="color: var(--minimal-dark);">
                     五感でつながる<br>子どもたち
                 </h1>
-                <p class="hero-subtitle text-xl md:text-2xl text-gray-600 mb-8">
+                <p class="hero-subtitle text-2xl md:text-3xl text-gray-500 mb-10 font-light tracking-wide">
                     高校生のまなざしから未来へ
                 </p>
-                <p class="hero-description text-lg text-gray-500 mb-12 max-w-3xl mx-auto">
+                <p class="hero-description text-lg md:text-xl text-gray-400 mb-16 max-w-3xl mx-auto leading-relaxed">
                     地域の子どもたちの格差を解消し、共感力あふれる社会を創る<br>
                     雲雀丘学園高等学校 地域共生ゼミの挑戦
                 </p>
@@ -251,39 +356,39 @@
         </section>
 
         <!-- 問題提起セクション -->
-        <section id="problem" class="py-20 bg-white">
+        <section id="problem" class="py-24 md:py-32" style="background-color: var(--minimal-gray);">
             <div class="container mx-auto px-4">
-                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                <h2 class="section-title text-5xl md:text-6xl font-bold text-center mb-16 tracking-tight" style="color: var(--minimal-dark);">
                     見過ごせない現実
                 </h2>
 
                 <!-- データビジュアライゼーション -->
                 <div class="grid md:grid-cols-3 gap-8 mb-12">
-                    <div class="stat-card bg-gray-50 p-6 rounded-xl text-center">
-                        <div class="stat-number text-5xl font-bold text-orange-500 mb-2" data-value="46">0</div>
-                        <div class="text-xl text-gray-700">%減少</div>
-                        <p class="text-gray-600 mt-2">児童館利用率の激減（5年間）</p>
+                    <div class="stat-card modern-card text-center">
+                        <div class="stat-number text-6xl font-bold text-orange-500 mb-3" data-value="46">0</div>
+                        <div class="text-xl text-gray-700 font-medium">%減少</div>
+                        <p class="text-gray-500 mt-3 text-sm">児童館利用率の激減（5年間）</p>
                     </div>
-                    <div class="stat-card bg-gray-50 p-6 rounded-xl text-center">
-                        <div class="stat-number text-5xl font-bold text-green-500 mb-2" data-value="11.5">0</div>
-                        <div class="text-xl text-gray-700">%</div>
-                        <p class="text-gray-600 mt-2">子どもの貧困率</p>
+                    <div class="stat-card modern-card text-center">
+                        <div class="stat-number text-6xl font-bold text-green-500 mb-3" data-value="11.5">0</div>
+                        <div class="text-xl text-gray-700 font-medium">%</div>
+                        <p class="text-gray-500 mt-3 text-sm">子どもの貧困率</p>
                     </div>
-                    <div class="stat-card bg-gray-50 p-6 rounded-xl text-center">
-                        <div class="stat-number text-5xl font-bold text-brown-600 mb-2" data-value="52.3">0</div>
-                        <div class="text-xl text-gray-700">%</div>
-                        <p class="text-gray-600 mt-2">友達と遊べない子ども（低所得世帯）</p>
+                    <div class="stat-card modern-card text-center">
+                        <div class="stat-number text-6xl font-bold text-brown-600 mb-3" data-value="52.3">0</div>
+                        <div class="text-xl text-gray-700 font-medium">%</div>
+                        <p class="text-gray-500 mt-3 text-sm">友達と遊べない子ども（低所得世帯）</p>
                     </div>
                 </div>
 
                 <!-- グラフエリア -->
                 <div class="grid md:grid-cols-2 gap-8 mb-12">
-                    <div class="chart-container bg-gray-50 p-6 rounded-xl">
-                        <h3 class="text-xl font-bold mb-4">世帯収入による体験格差</h3>
+                    <div class="chart-container modern-card">
+                        <h3 class="text-xl font-bold mb-6 text-gray-800">世帯収入による体験格差</h3>
                         <canvas id="experienceGapChart"></canvas>
                     </div>
-                    <div class="chart-container bg-gray-50 p-6 rounded-xl">
-                        <h3 class="text-xl font-bold mb-4">三世代世帯の減少</h3>
+                    <div class="chart-container modern-card">
+                        <h3 class="text-xl font-bold mb-6 text-gray-800">三世代世帯の減少</h3>
                         <canvas id="familyStructureChart"></canvas>
                     </div>
                 </div>
@@ -300,9 +405,9 @@
         </section>
 
         <!-- ソリューションセクション -->
-        <section id="solution" class="py-20 bg-gradient-to-b from-green-50 to-white">
+        <section id="solution" class="py-24 md:py-32 bg-white">
             <div class="container mx-auto px-4">
-                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                <h2 class="section-title text-5xl md:text-6xl font-bold text-center mb-16 tracking-tight" style="color: var(--minimal-dark);">
                     五感を使った農業体験プログラム
                 </h2>
 
@@ -387,41 +492,41 @@
         </section>
 
         <!-- インパクトセクション -->
-        <section id="impact" class="py-20 bg-gray-100">
+        <section id="impact" class="py-24 md:py-32" style="background-color: var(--minimal-gray);">
             <div class="container mx-auto px-4">
-                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                <h2 class="section-title text-5xl md:text-6xl font-bold text-center mb-16 tracking-tight" style="color: var(--minimal-dark);">
                     期待される3つの効果
                 </h2>
 
                 <div class="grid md:grid-cols-3 gap-8">
-                    <div class="impact-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-                        <div class="icon mb-4">
+                    <div class="impact-card modern-card group">
+                        <div class="icon mb-6 transform transition-transform duration-500 group-hover:scale-110">
                             <i class="fas fa-child text-5xl text-orange-500"></i>
                         </div>
-                        <h3 class="text-xl font-bold mb-4">子どもの孤立防止</h3>
-                        <p class="text-gray-600">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">子どもの孤立防止</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             経済状況に関わらず、すべての子どもたちが対等な仲間として参加。
                             共通の体験を通じて、本当の友情が育まれます。
                         </p>
                     </div>
 
-                    <div class="impact-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-                        <div class="icon mb-4">
+                    <div class="impact-card modern-card group">
+                        <div class="icon mb-6 transform transition-transform duration-500 group-hover:scale-110">
                             <i class="fas fa-graduation-cap text-5xl text-green-500"></i>
                         </div>
-                        <h3 class="text-xl font-bold mb-4">高校生の成長</h3>
-                        <p class="text-gray-600">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">高校生の成長</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             多様な背景を持つ子どもたちと関わることで、視野が広がり、
                             思いやりの心と社会課題への理解が深まります。
                         </p>
                     </div>
 
-                    <div class="impact-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-                        <div class="icon mb-4">
+                    <div class="impact-card modern-card group">
+                        <div class="icon mb-6 transform transition-transform duration-500 group-hover:scale-110">
                             <i class="fas fa-users text-5xl text-brown-600"></i>
                         </div>
-                        <h3 class="text-xl font-bold mb-4">地域の再生</h3>
-                        <p class="text-gray-600">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">地域の再生</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             世代を超えた対話と交流が生まれ、地域に新しい絆が芽生えます。
                             「みんなで子どもを育てる」文化の復活へ。
                         </p>
@@ -431,17 +536,17 @@
         </section>
 
         <!-- 現役高校生の思いセクション -->
-        <section id="thoughts" class="py-20 bg-white">
+        <section id="thoughts" class="py-24 md:py-32 bg-white">
             <div class="container mx-auto px-4">
-                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                <h2 class="section-title text-5xl md:text-6xl font-bold text-center mb-16 tracking-tight" style="color: var(--minimal-dark);">
                     現役高校生の思い
                 </h2>
 
-                <div class="max-w-4xl mx-auto">
+                <div class="max-w-4xl mx-auto space-y-8">
                     <!-- 思い1 -->
-                    <div class="thought-card bg-orange-50 p-8 rounded-2xl mb-8">
-                        <h3 class="text-2xl font-bold mb-4">表面上では正解がないが、正解の用意された教育</h3>
-                        <p class="text-gray-700 leading-relaxed">
+                    <div class="thought-card modern-card border-l-4 border-orange-500">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">表面上では正解がないが、正解の用意された教育</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             本校の家庭科の先生と話していた時に、先生たちは学習指導要領を解釈する時に、正解を用意する。
                             それによって、生徒が違う考え方をしていたら、それを自分たちの用意した正解に近づけようとしている。
                             だから、縛りはないけど、縛られてる状態に今の学生はある。という話がありました。
@@ -449,9 +554,9 @@
                     </div>
 
                     <!-- 思い2 -->
-                    <div class="thought-card bg-green-50 p-8 rounded-2xl mb-8">
-                        <h3 class="text-2xl font-bold mb-4">現役高校生の扱い</h3>
-                        <p class="text-gray-700 leading-relaxed">
+                    <div class="thought-card modern-card border-l-4 border-green-500">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">現役高校生の扱い</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             私たちが本当にしたいことや、心のそこにある本音が、大人の抑圧で言えないことがあります。
                             私たちもしっかり考えて発言できるのに、「たかが高校生ごときが何をいってるねん」「君たちは社会をしらない」
                             ということを、学生は少なくとも1度はあると思います。でも状況に応じて、「君たちはもう高校生なんだから」
@@ -460,9 +565,9 @@
                     </div>
 
                     <!-- 思い3 -->
-                    <div class="thought-card bg-brown-50 p-8 rounded-2xl mb-8">
-                        <h3 class="text-2xl font-bold mb-4">都合のいいように使われる学生たち</h3>
-                        <p class="text-gray-700 leading-relaxed">
+                    <div class="thought-card modern-card border-l-4 border-brown-600">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">都合のいいように使われる学生たち</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             中学生や小学生は、社会的にまだ働けない年齢、精神的にも大人に比べると幼いので、
                             上記のような都合のいいようには使われているとは感じません。（私も高校生になってから責任がだの、なんだの言われるようになりました。）
                             また、大学生になったら18歳を超えるので成人として、1人の大人として社会的にしっかり扱われます。
@@ -472,9 +577,9 @@
                     </div>
 
                     <!-- 思い4 -->
-                    <div class="thought-card bg-purple-50 p-8 rounded-2xl">
-                        <h3 class="text-2xl font-bold mb-4">これからの行動</h3>
-                        <p class="text-gray-700 leading-relaxed">
+                    <div class="thought-card modern-card border-l-4 border-purple-500">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">これからの行動</h3>
+                        <p class="text-gray-600 leading-relaxed">
                             この考え方や風習をなくさないと、高校生が社会に参画できず、共感性を育むことなんて以ての外できません。
                             この機会を通じて、立派な社会人の大人の方たちには、一度このことについて考えていただき、自分を見つめ直してほしいと思います。
                             私たち高校生から見て、社会で働く大人はカッコいい憧れの対象です。
