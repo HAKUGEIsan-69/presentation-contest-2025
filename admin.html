@@ -208,18 +208,26 @@
             }
         });
 
-        // 管理者ログイン（Supabase Auth使用）
+        // 一時的なハードコード認証（Supabase設定が完了するまで）
+        const TEMP_ADMIN_PASSWORD = '[REDACTED]';
+
+        // 管理者ログイン（ハイブリッド認証：ハードコード + Supabase Auth）
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const password = document.getElementById('adminPassword').value;
             const errorDiv = document.getElementById('adminError');
 
-            try {
-                // Supabase Authでログイン
-                // 管理者メール: hibari69+presentation@pm.me
-                console.log('Attempting login with email:', 'hibari69+presentation@pm.me');
-                console.log('Password length:', password.length);
+            // まずハードコード認証を試す
+            if (password === TEMP_ADMIN_PASSWORD) {
+                console.log('Login successful via hardcoded password');
+                isAdminLoggedIn = true;
+                showAdminPanel();
+                return;
+            }
 
+            // 次にSupabase Authを試す（将来的な移行のため）
+            try {
+                console.log('Attempting Supabase Auth login...');
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: 'hibari69+presentation@pm.me',
                     password: password
@@ -227,17 +235,15 @@
 
                 if (error) {
                     console.error('Supabase Auth Error:', error);
-                    console.error('Error message:', error.message);
-                    console.error('Error status:', error.status);
                     throw error;
                 }
 
-                console.log('Login successful:', data);
+                console.log('Login successful via Supabase');
                 isAdminLoggedIn = true;
                 showAdminPanel();
             } catch (error) {
-                console.error('Login error:', error);
-                errorDiv.textContent = 'ログインエラー: ' + (error.message || 'パスワードが正しくありません');
+                console.error('Login failed:', error);
+                errorDiv.textContent = 'パスワードが正しくありません';
                 errorDiv.classList.remove('hidden');
             }
         });
