@@ -28,20 +28,23 @@
 │   ├── aws-deploy.sh
 │   ├── cloudformation-template.yaml
 │   ├── supabase_setup.sql
-│   └── supabase_fix.sql
+│   ├── supabase_fix.sql
+│   └── create_admin_user.sql  # 管理者ユーザー作成用
 └── resources/          # プレゼン資料・台本
     └── *.txt
 ```
 
 ## 主な機能
 
-### 1. アクセス制限
-- **Supabase認証システム実装済み**
-- データベースでアクセスコードを管理
+### 1. アクセス制限とセキュリティ
+- **Supabase Auth認証システム実装済み**
+- ユーザー向け：データベースでアクセスコードを管理
+- 管理者向け：Supabase Authによる安全な認証
 - 有効期限設定可能
 - アクセスログ自動記録
 - セッションストレージによる24時間の認証維持
 - 管理画面でコードの追加・編集・削除が可能
+- **セキュリティ強化**: パスワードのハードコード排除
 
 ### 2. オープニング動画
 - 15秒の自動再生動画
@@ -68,6 +71,13 @@
 - タブレット、デスクトップ対応
 - タッチジェスチャー対応
 
+### 6. モダン・ミニマルデザインシステム
+- ガラスモーフィズムUI（ナビゲーション）
+- 洗練されたカード（24px border-radius）
+- スムーズなマイクロアニメーション
+- 一貫したタイポグラフィー（行間1.8）
+- 最適化されたカラーパレット
+
 ## セットアップ手順
 
 ### 1. Supabase設定（必須）
@@ -86,18 +96,23 @@ const SUPABASE_URL = 'https://goneyrlzzblcyzasecnl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJI...';
 ```
 
-### 2. 管理者パスワードの変更
+### 2. 管理者ユーザーの作成
 
-`admin.html`の以下の部分を編集:
+Supabase Authで管理者ユーザーを作成:
 
-```javascript
-const ADMIN_PASSWORD = 'admin2025'; // ← 強固なパスワードに変更
-```
+1. [Supabase Dashboard](https://app.supabase.com) → Authentication → Users
+2. "Add user" をクリック
+3. Email: `admin@presentation-contest.local`
+4. Password: 強固なパスワード（16文字以上推奨）
+5. "Auto Confirm User" にチェック
+6. "Create user" をクリック
+
+詳細は `scripts/create_admin_user.sql` を参照
 
 ### 3. アクセスコードの設定
 
 1. ブラウザで`admin.html`を開く
-2. 管理者パスワードでログイン
+2. Supabaseで作成した管理者パスワードでログイン
 3. 「新規コード追加」でアクセスコードを追加
 4. 不要なコードは削除または無効化
 
@@ -265,4 +280,6 @@ aws s3 sync . s3://presentation-contest-2025 \
 **注意事項**:
 - 本サイトは関係者限定公開を想定しています
 - アクセスコードは定期的に変更することを推奨します
+- 管理者パスワードは強固なものを設定し、定期的に変更してください
 - 個人情報を含む場合は適切なセキュリティ対策を実施してください
+- **セキュリティ**: Supabase Auth認証により、パスワードはコード内に含まれません
