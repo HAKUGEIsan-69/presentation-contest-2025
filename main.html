@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五感でつながる子どもたち - 高校生プレゼンテーションコンテスト2025</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        /* カスタムカラー */
+        :root {
+            --warm-orange: #FF6B35;
+            --natural-green: #8BC34A;
+            --earth-brown: #795548;
+        }
+
+        /* スクロールバー */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--warm-orange);
+            border-radius: 5px;
+        }
+
+        /* ローディングアニメーション */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--warm-orange);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* パララックス背景 */
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* グラデーション背景 */
+        .gradient-orange {
+            background: linear-gradient(135deg, #FF6B35 0%, #FFA947 100%);
+        }
+
+        .gradient-green {
+            background: linear-gradient(135deg, #8BC34A 0%, #AED581 100%);
+        }
+
+        .gradient-brown {
+            background: linear-gradient(135deg, #795548 0%, #A1887F 100%);
+        }
+
+        /* アニメーション */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 五感の円 */
+        .sense-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sense-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* 動画オーバーレイ */
+        #videoOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 認証チェック */
+        .auth-required {
+            display: none;
+        }
+
+        .auth-required.authenticated {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- 動画オーバーレイ（15秒のオープニング） -->
+    <div id="videoOverlay">
+        <div class="relative w-full h-full">
+            <!-- 動画プレースホルダー -->
+            <video id="openingVideo" class="w-full h-full object-cover" muted autoplay>
+                <source src="./download.MP4" type="video/mp4">
+                <!-- フォールバック：動画が読み込めない場合のアニメーション -->
+            </video>
+
+            <!-- 動画がない場合のアニメーション -->
+            <div id="videoFallback" class="absolute inset-0 flex items-center justify-center bg-black" style="display:none;">
+                <h1 class="text-white text-4xl md:text-6xl font-bold animate-pulse">
+                    高校生がつなぐ地域共生社会
+                </h1>
+            </div>
+
+            <!-- ミュートボタン -->
+            <button id="muteToggle" class="absolute bottom-8 right-8 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition">
+                <i class="fas fa-volume-mute text-xl"></i>
+            </button>
+
+            <!-- スキップボタン -->
+            <button id="skipIntro" class="absolute bottom-8 left-8 bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full hover:bg-white/30 transition">
+                スキップ →
+            </button>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div id="mainContent" class="opacity-0">
+
+        <!-- ナビゲーション -->
+        <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <span class="text-xl font-bold" style="color: var(--warm-orange);">
+                            五感でつながる子どもたち
+                        </span>
+                    </div>
+                    <div class="hidden md:flex space-x-8">
+                        <a href="#hero" class="nav-link text-gray-700 hover:text-orange-500 transition">ホーム</a>
+                        <a href="#problem" class="nav-link text-gray-700 hover:text-orange-500 transition">問題提起</a>
+                        <a href="#solution" class="nav-link text-gray-700 hover:text-orange-500 transition">ソリューション</a>
+                        <a href="#impact" class="nav-link text-gray-700 hover:text-orange-500 transition">インパクト</a>
+                        <a href="#thoughts" class="nav-link text-gray-700 hover:text-orange-500 transition">高校生の思い</a>
+                        <a href="./presenters.html" class="nav-link text-gray-700 hover:text-orange-500 transition">登壇者紹介</a>
+                    </div>
+                    <!-- モバイルメニューボタン -->
+                    <button id="mobileMenuBtn" class="md:hidden">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- モバイルメニュー -->
+        <div id="mobileMenu" class="fixed inset-0 bg-black/50 z-40 hidden">
+            <div class="bg-white w-64 h-full p-6">
+                <button id="closeMobileMenu" class="absolute top-4 right-4">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+                <div class="mt-8 space-y-4">
+                    <a href="#hero" class="block py-2 text-gray-700">ホーム</a>
+                    <a href="#problem" class="block py-2 text-gray-700">問題提起</a>
+                    <a href="#solution" class="block py-2 text-gray-700">ソリューション</a>
+                    <a href="#impact" class="block py-2 text-gray-700">インパクト</a>
+                    <a href="#thoughts" class="block py-2 text-gray-700">高校生の思い</a>
+                    <a href="./presenters.html" class="block py-2 text-gray-700">登壇者紹介</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ヒーローセクション -->
+        <section id="hero" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
+            <div class="absolute inset-0 gradient-orange opacity-10"></div>
+            <div class="container mx-auto px-4 text-center relative z-10">
+                <h1 class="hero-title text-5xl md:text-7xl font-bold mb-6">
+                    五感でつながる<br>子どもたち
+                </h1>
+                <p class="hero-subtitle text-xl md:text-2xl text-gray-600 mb-8">
+                    高校生のまなざしから未来へ
+                </p>
+                <p class="hero-description text-lg text-gray-500 mb-12 max-w-3xl mx-auto">
+                    地域の子どもたちの格差を解消し、共感力あふれる社会を創る<br>
+                    雲雀丘学園高等学校 地域共生ゼミの挑戦
+                </p>
+
+                <!-- 五感のビジュアル -->
+                <div class="five-senses flex justify-center items-center space-x-4 md:space-x-8 mb-12">
+                    <div class="sense-circle gradient-orange" data-sense="sight">
+                        <i class="fas fa-eye text-3xl"></i>
+                    </div>
+                    <div class="sense-circle gradient-green" data-sense="touch">
+                        <i class="fas fa-hand text-3xl"></i>
+                    </div>
+                    <div class="sense-circle gradient-brown" data-sense="taste">
+                        <i class="fas fa-utensils text-3xl"></i>
+                    </div>
+                    <div class="sense-circle gradient-orange" data-sense="smell">
+                        <i class="fas fa-wind text-3xl"></i>
+                    </div>
+                    <div class="sense-circle gradient-green" data-sense="hearing">
+                        <i class="fas fa-music text-3xl"></i>
+                    </div>
+                </div>
+
+                <a href="#problem" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-orange-600 transition transform hover:scale-105">
+                    ストーリーを見る <i class="fas fa-arrow-down ml-2"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- 問題提起セクション -->
+        <section id="problem" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                    見過ごせない現実
+                </h2>
+
+                <!-- データビジュアライゼーション -->
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <div class="stat-card bg-gray-50 p-6 rounded-xl text-center">
+                        <div class="stat-number text-5xl font-bold text-orange-500 mb-2" data-value="46">0</div>
+                        <div class="text-xl text-gray-700">%減少</div>
+                        <p class="text-gray-600 mt-2">児童館利用率の激減（5年間）</p>
+                    </div>
+                    <div class="stat-card bg-gray-50 p-6 rounded-xl text-center">
+                        <div class="stat-number text-5xl font-bold text-green-500 mb-2" data-value="11.5">0</div>
+                        <div class="text-xl text-gray-700">%</div>
+                        <p class="text-gray-600 mt-2">子どもの貧困率</p>
+                    </div>
+                    <div class="stat-card bg-gray-50 p-6 rounded-xl text-center">
+                        <div class="stat-number text-5xl font-bold text-brown-600 mb-2" data-value="52.3">0</div>
+                        <div class="text-xl text-gray-700">%</div>
+                        <p class="text-gray-600 mt-2">友達と遊べない子ども（低所得世帯）</p>
+                    </div>
+                </div>
+
+                <!-- グラフエリア -->
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="chart-container bg-gray-50 p-6 rounded-xl">
+                        <h3 class="text-xl font-bold mb-4">世帯収入による体験格差</h3>
+                        <canvas id="experienceGapChart"></canvas>
+                    </div>
+                    <div class="chart-container bg-gray-50 p-6 rounded-xl">
+                        <h3 class="text-xl font-bold mb-4">三世代世帯の減少</h3>
+                        <canvas id="familyStructureChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 問題の本質 -->
+                <div class="prose prose-lg max-w-4xl mx-auto">
+                    <p class="text-gray-700 leading-relaxed">
+                        少子化、核家族化、共働き世帯の増加。地域のつながりが希薄化する中で、
+                        子どもたちの居場所が失われつつあります。特に経済格差は、
+                        子どもたちの体験機会の格差となって現れ、その差は2.6倍にも達しています。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ソリューションセクション -->
+        <section id="solution" class="py-20 bg-gradient-to-b from-green-50 to-white">
+            <div class="container mx-auto px-4">
+                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                    五感を使った農業体験プログラム
+                </h2>
+
+                <!-- プログラム概要 -->
+                <div class="grid md:grid-cols-2 gap-12 mb-16">
+                    <div class="program-image">
+                        <div class="bg-green-100 h-96 rounded-2xl flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-seedling text-6xl text-green-500 mb-4"></i>
+                                <p class="text-xl text-gray-700">農業体験イメージ</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-description flex items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4">なぜ農業×五感なのか？</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <span>視覚：作物の成長を見守る喜び</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <span>触覚：土に触れ、自然を感じる</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <span>味覚：収穫した野菜を一緒に調理</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <span>嗅覚：土の匂い、野菜の香り</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <span>聴覚：自然の音、仲間との会話</span>
+                                </li>
+                            </ul>
+                            <p class="mt-6 text-gray-700">
+                                五感を使った体験は、単なる記憶ではなく、心に深く刻まれる経験となります。
+                                科学的研究でも、複数の感覚を使うことで記憶の質が向上することが証明されています。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- プログラムフロー -->
+                <div class="program-flow">
+                    <h3 class="text-2xl font-bold text-center mb-8">活動の流れ</h3>
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="flow-step text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-100 flex items-center justify-center">
+                                <i class="fas fa-book text-2xl text-orange-500"></i>
+                            </div>
+                            <h4 class="font-bold mb-2">学習支援</h4>
+                            <p class="text-sm text-gray-600">子ども館での勉強会</p>
+                        </div>
+                        <div class="flow-step text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-seedling text-2xl text-green-500"></i>
+                            </div>
+                            <h4 class="font-bold mb-2">農業体験</h4>
+                            <p class="text-sm text-gray-600">みんなで野菜を育てる</p>
+                        </div>
+                        <div class="flow-step text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-brown-100 flex items-center justify-center">
+                                <i class="fas fa-utensils text-2xl text-brown-600"></i>
+                            </div>
+                            <h4 class="font-bold mb-2">共食</h4>
+                            <p class="text-sm text-gray-600">一緒に料理して食べる</p>
+                        </div>
+                        <div class="flow-step text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
+                                <i class="fas fa-store text-2xl text-purple-500"></i>
+                            </div>
+                            <h4 class="font-bold mb-2">畑のマルシェ</h4>
+                            <p class="text-sm text-gray-600">地域との交流</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- インパクトセクション -->
+        <section id="impact" class="py-20 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                    期待される3つの効果
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="impact-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
+                        <div class="icon mb-4">
+                            <i class="fas fa-child text-5xl text-orange-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">子どもの孤立防止</h3>
+                        <p class="text-gray-600">
+                            経済状況に関わらず、すべての子どもたちが対等な仲間として参加。
+                            共通の体験を通じて、本当の友情が育まれます。
+                        </p>
+                    </div>
+
+                    <div class="impact-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
+                        <div class="icon mb-4">
+                            <i class="fas fa-graduation-cap text-5xl text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">高校生の成長</h3>
+                        <p class="text-gray-600">
+                            多様な背景を持つ子どもたちと関わることで、視野が広がり、
+                            思いやりの心と社会課題への理解が深まります。
+                        </p>
+                    </div>
+
+                    <div class="impact-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
+                        <div class="icon mb-4">
+                            <i class="fas fa-users text-5xl text-brown-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">地域の再生</h3>
+                        <p class="text-gray-600">
+                            世代を超えた対話と交流が生まれ、地域に新しい絆が芽生えます。
+                            「みんなで子どもを育てる」文化の復活へ。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 現役高校生の思いセクション -->
+        <section id="thoughts" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="section-title text-4xl font-bold text-center mb-12">
+                    現役高校生の思い
+                </h2>
+
+                <div class="max-w-4xl mx-auto">
+                    <!-- 思い1 -->
+                    <div class="thought-card bg-orange-50 p-8 rounded-2xl mb-8">
+                        <h3 class="text-2xl font-bold mb-4">表面上では正解がないが、正解の用意された教育</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            本校の家庭科の先生と話していた時に、先生たちは学習指導要領を解釈する時に、正解を用意する。
+                            それによって、生徒が違う考え方をしていたら、それを自分たちの用意した正解に近づけようとしている。
+                            だから、縛りはないけど、縛られてる状態に今の学生はある。という話がありました。
+                        </p>
+                    </div>
+
+                    <!-- 思い2 -->
+                    <div class="thought-card bg-green-50 p-8 rounded-2xl mb-8">
+                        <h3 class="text-2xl font-bold mb-4">現役高校生の扱い</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            私たちが本当にしたいことや、心のそこにある本音が、大人の抑圧で言えないことがあります。
+                            私たちもしっかり考えて発言できるのに、「たかが高校生ごときが何をいってるねん」「君たちは社会をしらない」
+                            ということを、学生は少なくとも1度はあると思います。でも状況に応じて、「君たちはもう高校生なんだから」
+                            などと言われることもあるので、私たちは社会から都合のいいように使われています。
+                        </p>
+                    </div>
+
+                    <!-- 思い3 -->
+                    <div class="thought-card bg-brown-50 p-8 rounded-2xl mb-8">
+                        <h3 class="text-2xl font-bold mb-4">都合のいいように使われる学生たち</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            中学生や小学生は、社会的にまだ働けない年齢、精神的にも大人に比べると幼いので、
+                            上記のような都合のいいようには使われているとは感じません。（私も高校生になってから責任がだの、なんだの言われるようになりました。）
+                            また、大学生になったら18歳を超えるので成人として、1人の大人として社会的にしっかり扱われます。
+                            でも高校生はどうでしょうか？先に述べたように、時には子供として、時には大人として、
+                            大人たちの都合のいいように扱われています。
+                        </p>
+                    </div>
+
+                    <!-- 思い4 -->
+                    <div class="thought-card bg-purple-50 p-8 rounded-2xl">
+                        <h3 class="text-2xl font-bold mb-4">これからの行動</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            この考え方や風習をなくさないと、高校生が社会に参画できず、共感性を育むことなんて以ての外できません。
+                            この機会を通じて、立派な社会人の大人の方たちには、一度このことについて考えていただき、自分を見つめ直してほしいと思います。
+                            私たち高校生から見て、社会で働く大人はカッコいい憧れの対象です。
+                            その自覚をもってもらい、学生たちの扱いを再度考えて頂きたいものです。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTAセクション -->
+        <section id="cta" class="py-20 gradient-orange text-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-4xl font-bold mb-8">
+                    一緒に未来を創りませんか？
+                </h2>
+                <p class="text-xl mb-12 max-w-3xl mx-auto">
+                    高校生が地域をつなぎ、子どもたちの笑顔を守る。
+                    小さな一歩が、大きな変化を生み出します。
+                </p>
+
+                <!-- QRコード表示エリア -->
+                <div class="qr-section bg-white rounded-2xl p-8 max-w-md mx-auto mb-12">
+                    <h3 class="text-gray-800 font-bold mb-4">プレゼン資料はこちら</h3>
+                    <div class="bg-gray-200 w-48 h-48 mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-qrcode text-6xl text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm">QRコードを読み取ってください</p>
+                </div>
+
+                <!-- SNSシェアボタン -->
+                <div class="social-share mb-12">
+                    <p class="mb-4">活動をシェアして応援</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                        <a href="#" class="bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                        <a href="#" class="bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 問い合わせボタン -->
+                <button onclick="showContactForm()" class="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-medium hover:bg-gray-100 transition transform hover:scale-105">
+                    お問い合わせはこちら
+                </button>
+            </div>
+        </section>
+
+        <!-- フッター -->
+        <footer class="bg-gray-800 text-white py-12">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">雲雀丘学園高等学校</h3>
+                        <p class="text-gray-400">
+                            地域共生ゼミ<br>
+                            〒665-0805<br>
+                            兵庫県宝塚市雲雀丘4-2-1
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">植草学園大学</h3>
+                        <p class="text-gray-400">
+                            高校生プレゼンテーションコンテスト2025<br>
+                            2025年11月8日（土）開催
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">リンク</h3>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><a href="./presenters.html" class="hover:text-white transition">登壇者紹介</a></li>
+                            <li><a href="#" class="hover:text-white transition">プライバシーポリシー</a></li>
+                            <li><a href="#" class="hover:text-white transition">お問い合わせ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                    <p class="text-gray-400">
+                        © 2025 雲雀丘学園高等学校. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 問い合わせフォームモーダル -->
+    <div id="contactModal" class="fixed inset-0 bg-black/50 z-50 hidden">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-2xl max-w-md w-full p-8">
+                <h3 class="text-2xl font-bold mb-4">お問い合わせ</h3>
+                <p class="text-gray-600 mb-6">
+                    Google Formsから送信されます
+                </p>
+                <!-- Google Forms埋め込みエリア -->
+                <div class="bg-gray-100 h-64 rounded-lg flex items-center justify-center mb-6">
+                    <p class="text-gray-500">Google Forms埋め込みエリア</p>
+                </div>
+                <button onclick="hideContactForm()" class="w-full bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 認証チェック
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+            if (!isAuthenticated) {
+                window.location.href = './login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ページ読み込み時の認証チェック
+        window.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+
+            // GSAPの初期化
+            gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+            // 動画の処理
+            const video = document.getElementById('openingVideo');
+            const videoOverlay = document.getElementById('videoOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const skipBtn = document.getElementById('skipIntro');
+            const muteBtn = document.getElementById('muteToggle');
+
+            // 動画エラー時の処理
+            video.addEventListener('error', function() {
+                document.getElementById('videoFallback').style.display = 'flex';
+                video.style.display = 'none';
+            });
+
+            // 15秒後に自動的にメインコンテンツへ
+            const transitionToMain = () => {
+                gsap.to(videoOverlay, {
+                    opacity: 0,
+                    duration: 1,
+                    onComplete: () => {
+                        videoOverlay.style.display = 'none';
+                        gsap.to(mainContent, {
+                            opacity: 1,
+                            duration: 1
+                        });
+                        initAnimations();
+                    }
+                });
+            };
+
+            // 15秒タイマー
+            setTimeout(transitionToMain, 15000);
+
+            // スキップボタン
+            skipBtn.addEventListener('click', transitionToMain);
+
+            // ミュートボタン
+            muteBtn.addEventListener('click', () => {
+                if (video.muted) {
+                    video.muted = false;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-up text-xl"></i>';
+                } else {
+                    video.muted = true;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-mute text-xl"></i>';
+                }
+            });
+
+            // アニメーションの初期化
+            function initAnimations() {
+                // ヒーローセクションのアニメーション
+                gsap.from('.hero-title', {
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                    delay: 0.5
+                });
+
+                gsap.from('.hero-subtitle', {
+                    y: 30,
+                    opacity: 0,
+                    duration: 1,
+                    delay: 0.7
+                });
+
+                gsap.from('.hero-description', {
+                    y: 30,
+                    opacity: 0,
+                    duration: 1,
+                    delay: 0.9
+                });
+
+                // 五感の円アニメーション
+                gsap.from('.sense-circle', {
+                    scale: 0,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.2,
+                    delay: 1.2,
+                    ease: "back.out(1.7)"
+                });
+
+                // カウントアップアニメーション
+                const counters = document.querySelectorAll('.stat-number');
+                counters.forEach(counter => {
+                    const target = parseFloat(counter.getAttribute('data-value'));
+
+                    ScrollTrigger.create({
+                        trigger: counter,
+                        start: 'top 80%',
+                        onEnter: () => {
+                            gsap.to(counter, {
+                                innerHTML: target,
+                                duration: 2,
+                                snap: {innerHTML: 0.1},
+                                onUpdate: function() {
+                                    counter.innerHTML = parseFloat(counter.innerHTML).toFixed(1);
+                                }
+                            });
+                        },
+                        once: true
+                    });
+                });
+
+                // セクションのフェードインアニメーション
+                gsap.utils.toArray('.section-title').forEach(title => {
+                    ScrollTrigger.create({
+                        trigger: title,
+                        start: 'top 80%',
+                        onEnter: () => {
+                            gsap.from(title, {
+                                y: 50,
+                                opacity: 0,
+                                duration: 1
+                            });
+                        },
+                        once: true
+                    });
+                });
+
+                // カードのアニメーション
+                gsap.utils.toArray('.impact-card').forEach((card, index) => {
+                    ScrollTrigger.create({
+                        trigger: card,
+                        start: 'top 80%',
+                        onEnter: () => {
+                            gsap.from(card, {
+                                y: 50,
+                                opacity: 0,
+                                duration: 0.8,
+                                delay: index * 0.2
+                            });
+                        },
+                        once: true
+                    });
+                });
+
+                // チャートの初期化
+                initCharts();
+            }
+
+            // チャートの設定
+            function initCharts() {
+                // 体験格差チャート
+                const ctx1 = document.getElementById('experienceGapChart').getContext('2d');
+                new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['年収300万円未満', '年収600万円以上'],
+                        datasets: [{
+                            label: '体験活動なしの割合 (%)',
+                            data: [29.9, 11.3],
+                            backgroundColor: ['#FF6B35', '#8BC34A']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 35
+                            }
+                        }
+                    }
+                });
+
+                // 家族構造チャート
+                const ctx2 = document.getElementById('familyStructureChart').getContext('2d');
+                new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: ['1986年', '2000年', '2010年', '2023年'],
+                        datasets: [{
+                            label: '三世代世帯の割合 (%)',
+                            data: [15.3, 10.1, 7.1, 3.8],
+                            borderColor: '#795548',
+                            backgroundColor: 'rgba(121, 85, 72, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 20
+                            }
+                        }
+                    }
+                });
+            }
+
+            // モバイルメニュー
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.remove('hidden');
+            });
+
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+
+            // スムーズスクロール
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // モバイルメニューを閉じる
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // 問い合わせフォームの表示/非表示
+        function showContactForm() {
+            document.getElementById('contactModal').classList.remove('hidden');
+        }
+
+        function hideContactForm() {
+            document.getElementById('contactModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

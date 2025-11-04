@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登壇者紹介 - 高校生プレゼンテーションコンテスト2025</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        /* カスタムカラー */
+        :root {
+            --warm-orange: #FF6B35;
+            --natural-green: #8BC34A;
+            --earth-brown: #795548;
+        }
+
+        /* スクロールバー */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--warm-orange);
+            border-radius: 5px;
+        }
+
+        /* グラデーション背景 */
+        .gradient-orange {
+            background: linear-gradient(135deg, #FF6B35 0%, #FFA947 100%);
+        }
+
+        .gradient-green {
+            background: linear-gradient(135deg, #8BC34A 0%, #AED581 100%);
+        }
+
+        .gradient-brown {
+            background: linear-gradient(135deg, #795548 0%, #A1887F 100%);
+        }
+
+        /* プロフィールカードのホバー効果 */
+        .profile-card {
+            transition: all 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* タイムラインスタイル */
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--warm-orange);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -6px;
+            width: 14px;
+            height: 14px;
+            background: var(--warm-orange);
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- ナビゲーション -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="./main.html" class="text-xl font-bold" style="color: var(--warm-orange);">
+                        五感でつながる子どもたち
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="./main.html" class="text-gray-700 hover:text-orange-500 transition">ホーム</a>
+                    <a href="./main.html#problem" class="text-gray-700 hover:text-orange-500 transition">問題提起</a>
+                    <a href="./main.html#solution" class="text-gray-700 hover:text-orange-500 transition">ソリューション</a>
+                    <a href="./main.html#impact" class="text-gray-700 hover:text-orange-500 transition">インパクト</a>
+                    <a href="#" class="text-orange-500 font-medium">登壇者紹介</a>
+                </div>
+                <!-- モバイルメニューボタン -->
+                <button id="mobileMenuBtn" class="md:hidden">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- モバイルメニュー -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black/50 z-40 hidden">
+        <div class="bg-white w-64 h-full p-6">
+            <button id="closeMobileMenu" class="absolute top-4 right-4">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="mt-8 space-y-4">
+                <a href="./main.html" class="block py-2 text-gray-700">ホーム</a>
+                <a href="./main.html#problem" class="block py-2 text-gray-700">問題提起</a>
+                <a href="./main.html#solution" class="block py-2 text-gray-700">ソリューション</a>
+                <a href="./main.html#impact" class="block py-2 text-gray-700">インパクト</a>
+                <a href="#" class="block py-2 text-orange-500 font-medium">登壇者紹介</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヘッダーセクション -->
+    <section class="pt-24 pb-12 gradient-orange text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                登壇者紹介
+            </h1>
+            <p class="text-xl">
+                雲雀丘学園高等学校 地域共生ゼミ
+            </p>
+            <p class="mt-4 text-lg opacity-90">
+                高校生プレゼンテーションコンテスト2025
+            </p>
+        </div>
+    </section>
+
+    <!-- チーム紹介セクション -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8">私たちのチーム</h2>
+
+                <div class="bg-orange-50 p-8 rounded-2xl mb-12">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        私たち地域共生ゼミは、地域の課題に向き合い、実践的な解決策を提案・実行する高校生グループです。
+                        宝塚市の子ども館での学習支援活動から始まり、子どもたちの格差問題に気づき、
+                        五感を使った農業体験プログラムという独自の解決策を提案しています。
+                    </p>
+                </div>
+
+                <!-- プレゼンの役割分担 -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-center">プレゼンテーション構成</h3>
+                    <div class="timeline">
+                        <div class="timeline-item mb-8">
+                            <div class="timeline-dot" style="top: 10px;"></div>
+                            <div class="ml-2">
+                                <h4 class="font-bold text-lg mb-2">導入・現状分析（2分30秒）</h4>
+                                <p class="text-gray-600">小寺さん、村上さん、酒井さん</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    子ども館利用者の減少、貧困率の上昇、体験格差の実態を データと共に提示
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item mb-8">
+                            <div class="timeline-dot" style="top: 10px;"></div>
+                            <div class="ml-2">
+                                <h4 class="font-bold text-lg mb-2">高校生の役割（30秒）</h4>
+                                <p class="text-gray-600">小寺さん、村上さん</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    なぜ高校生が架け橋となれるのか
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item mb-8">
+                            <div class="timeline-dot" style="top: 10px;"></div>
+                            <div class="ml-2">
+                                <h4 class="font-bold text-lg mb-2">農業プログラム提案（2分30秒）</h4>
+                                <p class="text-gray-600">山﨑さん、酒井さん、小寺さん、村上さん</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    五感を使った体験の重要性、畑のマルシェの提案
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item mb-8">
+                            <div class="timeline-dot" style="top: 10px;"></div>
+                            <div class="ml-2">
+                                <h4 class="font-bold text-lg mb-2">アクシス発見スクール（1分）</h4>
+                                <p class="text-gray-600">小寺さん、村上さん</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    共感力を育む実践事例の紹介
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="top: 10px;"></div>
+                            <div class="ml-2">
+                                <h4 class="font-bold text-lg mb-2">現役高校生の思い（1分）</h4>
+                                <p class="text-gray-600">酒井さん、小寺さん、村上さん</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    教育の矛盾、高校生の立場、社会への提言
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- メンバー紹介セクション -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">チームメンバー</h2>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- メンバー1 -->
+                <div class="profile-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="gradient-orange h-48 flex items-center justify-center">
+                        <i class="fas fa-user-circle text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">小寺さん</h3>
+                        <p class="text-gray-600 mb-4">雲雀丘学園高等学校</p>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-microphone text-orange-500 mr-2"></i>
+                                現状分析・考察担当
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-seedling text-green-500 mr-2"></i>
+                                プログラム効果説明
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t">
+                            <p class="text-sm text-gray-600 italic">
+                                「データから見える子どもたちの現実を、わかりやすく伝えます」
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メンバー2 -->
+                <div class="profile-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="gradient-green h-48 flex items-center justify-center">
+                        <i class="fas fa-user-circle text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">村上さん</h3>
+                        <p class="text-gray-600 mb-4">雲雀丘学園高等学校</p>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-lightbulb text-orange-500 mr-2"></i>
+                                導入・アクシス発見スクール担当
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-heart text-red-500 mr-2"></i>
+                                現役高校生の思い
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t">
+                            <p class="text-sm text-gray-600 italic">
+                                「高校生だからこそできることがある。その思いを伝えます」
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メンバー3 -->
+                <div class="profile-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="gradient-brown h-48 flex items-center justify-center">
+                        <i class="fas fa-user-circle text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">酒井さん</h3>
+                        <p class="text-gray-600 mb-4">雲雀丘学園高等学校</p>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-chart-bar text-orange-500 mr-2"></i>
+                                データ分析・考察担当
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-comments text-blue-500 mr-2"></i>
+                                社会への提言
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t">
+                            <p class="text-sm text-gray-600 italic">
+                                「地域の分断を、私たちの手でつなぎ直したい」
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メンバー4（仮） -->
+                <div class="profile-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="gradient-orange h-48 flex items-center justify-center">
+                        <i class="fas fa-user-circle text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">山﨑さん</h3>
+                        <p class="text-gray-600 mb-4">雲雀丘学園高等学校</p>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-leaf text-green-500 mr-2"></i>
+                                農業プログラム提案
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-store text-purple-500 mr-2"></i>
+                                畑のマルシェ企画
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t">
+                            <p class="text-sm text-gray-600 italic">
+                                「五感を通じた体験が、子どもたちの未来を変える」
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- サポートメンバー（仮） -->
+                <div class="profile-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="gradient-green h-48 flex items-center justify-center">
+                        <i class="fas fa-users text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">地域共生ゼミメンバー</h3>
+                        <p class="text-gray-600 mb-4">雲雀丘学園高等学校</p>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-hands-helping text-orange-500 mr-2"></i>
+                                活動サポート
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-camera text-blue-500 mr-2"></i>
+                                記録・広報活動
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t">
+                            <p class="text-sm text-gray-600 italic">
+                                「チーム一丸となって、地域の未来を創ります」
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 指導教員・協力者セクション -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">ご指導・ご協力いただいた方々</h2>
+
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <!-- 指導教員 -->
+                <div class="bg-gray-50 p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-4">
+                        <i class="fas fa-chalkboard-teacher text-orange-500 mr-2"></i>
+                        指導教員
+                    </h3>
+                    <p class="text-gray-700 mb-2">雲雀丘学園高等学校</p>
+                    <p class="text-sm text-gray-600">
+                        地域共生ゼミ担当教諭
+                    </p>
+                    <p class="mt-4 text-sm text-gray-600 italic">
+                        生徒たちの主体的な活動をサポートし、地域との架け橋となっています
+                    </p>
+                </div>
+
+                <!-- 協力団体 -->
+                <div class="bg-gray-50 p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-4">
+                        <i class="fas fa-handshake text-green-500 mr-2"></i>
+                        協力団体・個人
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>• 宝塚市生活協同組合</li>
+                        <li>• 宝塚市子ども館関係者</li>
+                        <li>• アクシス発見スクール</li>
+                        <li>• 地域の農家の皆様</li>
+                    </ul>
+                    <p class="mt-4 text-sm text-gray-600 italic">
+                        多くの方々のご協力により、活動が実現しています
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- メッセージセクション -->
+    <section class="py-16 bg-gradient-to-b from-orange-50 to-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-8">私たちからのメッセージ</h2>
+
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        高校生プレゼンテーションコンテストという貴重な機会をいただき、ありがとうございます。
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        私たちは、地域の課題を「他人事」ではなく「自分事」として捉え、
+                        実際に行動を起こすことで、小さくても確実な変化を生み出せると信じています。
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        五感でつながる子どもたちのプロジェクトは、単なるアイデアではありません。
+                        私たちが実際に地域で活動し、感じ、考えたことから生まれた、実現可能な提案です。
+                    </p>
+                    <p class="text-lg font-medium text-orange-600">
+                        高校生が地域をつなぎ、共感力あふれる社会を創る。<br>
+                        その第一歩を、ここから始めます。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <a href="./main.html" class="inline-block bg-orange-500 text-white px-8 py-3 rounded-full font-medium hover:bg-orange-600 transition mb-6">
+                    <i class="fas fa-arrow-left mr-2"></i> メインページに戻る
+                </a>
+                <p class="text-gray-400">
+                    © 2025 雲雀丘学園高等学校. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 認証チェック
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+            if (!isAuthenticated) {
+                window.location.href = './login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ページ読み込み時の処理
+        window.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+
+            // GSAPアニメーション
+            gsap.registerPlugin(ScrollTrigger);
+
+            // ヘッダーアニメーション
+            gsap.from('h1', {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                delay: 0.3
+            });
+
+            // プロフィールカードのアニメーション
+            gsap.utils.toArray('.profile-card').forEach((card, index) => {
+                ScrollTrigger.create({
+                    trigger: card,
+                    start: 'top 80%',
+                    onEnter: () => {
+                        gsap.from(card, {
+                            y: 50,
+                            opacity: 0,
+                            duration: 0.8,
+                            delay: index * 0.1
+                        });
+                    },
+                    once: true
+                });
+            });
+
+            // タイムラインアニメーション
+            gsap.utils.toArray('.timeline-item').forEach((item, index) => {
+                ScrollTrigger.create({
+                    trigger: item,
+                    start: 'top 80%',
+                    onEnter: () => {
+                        gsap.from(item, {
+                            x: -50,
+                            opacity: 0,
+                            duration: 0.8,
+                            delay: index * 0.1
+                        });
+                    },
+                    once: true
+                });
+            });
+
+            // モバイルメニュー
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.remove('hidden');
+            });
+
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

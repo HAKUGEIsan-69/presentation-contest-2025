@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRコード生成 - 高校生プレゼンテーションコンテスト2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- ヘッダー -->
+            <div class="text-center text-white mb-12">
+                <h1 class="text-4xl font-bold mb-4">QRコード生成ツール</h1>
+                <p class="text-xl">高校生プレゼンテーションコンテスト2025 特設サイト</p>
+            </div>
+
+            <!-- QRコード生成セクション -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <h2 class="text-2xl font-bold mb-6">サイトURL入力</h2>
+
+                <div class="space-y-4">
+                    <!-- S3 URL -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            S3静的ホスティングURL
+                        </label>
+                        <input type="text" id="s3Url"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                               placeholder="http://presentation-contest-2025.s3-website-ap-northeast-1.amazonaws.com"
+                               value="">
+                    </div>
+
+                    <!-- CloudFront URL (オプション) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            CloudFront URL（HTTPS対応）
+                        </label>
+                        <input type="text" id="cloudFrontUrl"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                               placeholder="https://d123456789abcd.cloudfront.net">
+                    </div>
+
+                    <!-- カスタムドメイン (オプション) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            カスタムドメイン（設定済みの場合）
+                        </label>
+                        <input type="text" id="customDomain"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                               placeholder="https://presentation2025.example.com">
+                    </div>
+
+                    <button onclick="generateAllQR()"
+                            class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition font-medium">
+                        QRコードを生成
+                    </button>
+                </div>
+            </div>
+
+            <!-- 生成されたQRコード表示エリア -->
+            <div id="qrCodesContainer" class="hidden">
+                <!-- メインサイト用QRコード -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <h3 class="text-xl font-bold mb-4">メインサイト用QRコード</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="text-center">
+                            <div id="qrMain" class="inline-block p-4 bg-white border-2 border-gray-200 rounded-lg"></div>
+                            <p class="mt-4 text-sm text-gray-600" id="urlMain"></p>
+                            <button onclick="downloadQR('qrMain', 'main-site')"
+                                    class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+                                画像をダウンロード
+                            </button>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2">使用シーン</h4>
+                            <ul class="text-sm text-gray-600 space-y-2">
+                                <li>• プレゼンテーションスライドへの埋め込み</li>
+                                <li>• 配布資料への印刷</li>
+                                <li>• 会場での掲示</li>
+                                <li>• SNSでの共有</li>
+                            </ul>
+                            <div class="mt-4 p-4 bg-orange-50 rounded-lg">
+                                <p class="text-sm font-medium text-orange-800">アクセスコード</p>
+                                <p class="text-xs text-orange-600 mt-1">
+                                    サイトアクセスには別途アクセスコードが必要です
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 管理画面用QRコード -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <h3 class="text-xl font-bold mb-4">管理画面用QRコード（関係者限定）</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="text-center">
+                            <div id="qrAdmin" class="inline-block p-4 bg-white border-2 border-red-200 rounded-lg"></div>
+                            <p class="mt-4 text-sm text-gray-600" id="urlAdmin"></p>
+                            <button onclick="downloadQR('qrAdmin', 'admin-panel')"
+                                    class="mt-4 bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                                画像をダウンロード
+                            </button>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2">注意事項</h4>
+                            <div class="p-4 bg-red-50 rounded-lg">
+                                <p class="text-sm font-medium text-red-800">⚠️ 管理者専用</p>
+                                <ul class="text-xs text-red-600 mt-2 space-y-1">
+                                    <li>• このQRコードは管理者のみに共有</li>
+                                    <li>• 一般公開しないでください</li>
+                                    <li>• 管理者パスワードは別途共有</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- プレゼン資料用QRコード -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold mb-4">プレゼン資料ダウンロード用QRコード</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="text-center">
+                            <div id="qrPresentation" class="inline-block p-4 bg-white border-2 border-green-200 rounded-lg"></div>
+                            <p class="mt-4 text-sm text-gray-600" id="urlPresentation"></p>
+                            <button onclick="downloadQR('qrPresentation', 'presentation')"
+                                    class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
+                                画像をダウンロード
+                            </button>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2">含まれる資料</h4>
+                            <ul class="text-sm text-gray-600 space-y-2">
+                                <li>• プレゼンテーションスライド（PDF）</li>
+                                <li>• 補足資料</li>
+                                <li>• 参考文献リスト</li>
+                            </ul>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    資料URL（Google Drive等）
+                                </label>
+                                <input type="text" id="presentationUrl"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                       placeholder="https://drive.google.com/...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 印刷用レイアウト -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 mt-8 hidden" id="printLayout">
+                <h3 class="text-xl font-bold mb-6">印刷用レイアウト</h3>
+                <button onclick="window.print()"
+                        class="bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-800 mb-4">
+                    印刷プレビュー
+                </button>
+                <div class="border-2 border-dashed border-gray-300 p-8 rounded-lg">
+                    <p class="text-gray-500 text-center">印刷用レイアウトが表示されます</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // QRコード生成関数
+        function generateAllQR() {
+            const s3Url = document.getElementById('s3Url').value;
+            const cloudFrontUrl = document.getElementById('cloudFrontUrl').value;
+            const customDomain = document.getElementById('customDomain').value;
+
+            // 優先順位: カスタムドメイン > CloudFront > S3
+            const baseUrl = customDomain || cloudFrontUrl || s3Url;
+
+            if (!baseUrl) {
+                alert('URLを入力してください');
+                return;
+            }
+
+            // コンテナを表示
+            document.getElementById('qrCodesContainer').classList.remove('hidden');
+
+            // 既存のQRコードをクリア
+            document.getElementById('qrMain').innerHTML = '';
+            document.getElementById('qrAdmin').innerHTML = '';
+            document.getElementById('qrPresentation').innerHTML = '';
+
+            // メインサイト用QRコード生成
+            const mainUrl = baseUrl;
+            new QRCode(document.getElementById('qrMain'), {
+                text: mainUrl,
+                width: 256,
+                height: 256,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('urlMain').textContent = mainUrl;
+
+            // 管理画面用QRコード生成
+            const adminUrl = baseUrl.replace(/\/$/, '') + '/admin.html';
+            new QRCode(document.getElementById('qrAdmin'), {
+                text: adminUrl,
+                width: 256,
+                height: 256,
+                colorDark: '#dc2626',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('urlAdmin').textContent = adminUrl;
+
+            // プレゼン資料用QRコード生成
+            const presentationUrl = document.getElementById('presentationUrl').value ||
+                                   'https://docs.google.com/presentation/d/your-presentation-id';
+            new QRCode(document.getElementById('qrPresentation'), {
+                text: presentationUrl,
+                width: 256,
+                height: 256,
+                colorDark: '#10b981',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('urlPresentation').textContent = presentationUrl;
+        }
+
+        // QRコード画像ダウンロード関数
+        function downloadQR(elementId, filename) {
+            const canvas = document.querySelector(`#${elementId} canvas`);
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = `qr-${filename}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        }
+
+        // デフォルトURLを設定（AWSデプロイ後に更新）
+        window.addEventListener('DOMContentLoaded', () => {
+            // S3のデフォルトURLパターン
+            document.getElementById('s3Url').value =
+                'http://presentation-contest-2025.s3-website-ap-northeast-1.amazonaws.com';
+        });
+    </script>
+
+    <!-- 印刷用スタイル -->
+    <style media="print">
+        body {
+            background: white !important;
+        }
+        .gradient-bg {
+            background: white !important;
+        }
+        button {
+            display: none !important;
+        }
+        input {
+            border: none !important;
+            padding: 0 !important;
+        }
+    </style>
+</body>
+</html>
