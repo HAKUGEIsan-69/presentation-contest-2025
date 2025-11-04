@@ -51,3 +51,10 @@ aws-exports.js
 # Build output
 dist/
 build/
+
+# Security - DO NOT COMMIT
+*_temp.sql
+*_password*.sql
+secrets/
+credentials/
+*.secret
