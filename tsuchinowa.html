@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>つちのわ - 高校生プレゼンテーションコンテスト2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .video-bg video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(to bottom, transparent 0%, rgba(249, 250, 251, 0.9) 30%, rgba(249, 250, 251, 1) 50%);
+            min-height: 100vh;
+        }
+        .hero-content {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .harvest-card {
+            transition: all 0.3s ease;
+        }
+        .harvest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 背景動画 -->
+    <div class="video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="動画/つちのわ（背景動画）.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="video-overlay"></div>
+
+    <!-- コンテンツラッパー -->
+    <div class="content-wrapper">
+        <!-- ヒーローセクション -->
+        <section class="hero-content">
+            <div class="container mx-auto px-4 text-center text-white">
+                <h1 class="text-6xl md:text-8xl font-bold mb-6 hero-title">つちのわ</h1>
+                <p class="text-2xl md:text-3xl mb-8 hero-subtitle">土と人をつなぐ、循環型農業プロジェクト</p>
+                <div class="flex justify-center gap-4 mt-12">
+                    <a href="#about" class="bg-white text-purple-700 px-8 py-4 rounded-full font-semibold hover:bg-purple-100 transition scroll-btn">
+                        詳しく見る <i class="fas fa-arrow-down ml-2"></i>
+                    </a>
+                    <a href="main.html" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-700 transition">
+                        <i class="fas fa-home mr-2"></i>ホーム
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ナビゲーション -->
+        <nav class="sticky top-0 bg-white shadow-md z-10">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800">つちのわプロジェクト</h2>
+                    <div class="flex gap-4">
+                        <a href="activities.html" class="text-purple-600 hover:text-purple-800">
+                            <i class="fas fa-calendar mr-1"></i>活動履歴
+                        </a>
+                        <a href="marche.html" class="text-purple-600 hover:text-purple-800">
+                            <i class="fas fa-store mr-1"></i>畑のマルシェ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- プロジェクト概要 -->
+        <section id="about" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-4xl font-bold text-center mb-12 section-title">つちのわとは？</h2>
+
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-8 mb-12">
+                        <p class="text-lg leading-relaxed mb-6">
+                            「つちのわ」は、雲雀丘学園高等学校 地域共生ゼミが主導する循環型農業プロジェクトです。
+                            地域の皆様と共に土づくりから始め、野菜を育て、収穫し、そして再び土に還すという
+                            自然の循環を体験しながら、持続可能な社会について考えます。
+                        </p>
+                        <p class="text-lg leading-relaxed">
+                            このプロジェクトを通じて、食の大切さ、農業の価値、そして地域コミュニティの
+                            つながりの重要性を学び、次世代に伝えていくことを目指しています。
+                        </p>
+                    </div>
+
+                    <!-- 3つの柱 -->
+                    <div class="grid md:grid-cols-3 gap-6 mb-12">
+                        <div class="text-center pillar-card">
+                            <div class="bg-green-500 text-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-seedling text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">育てる</h3>
+                            <p class="text-gray-600">
+                                無農薬・有機栽培で野菜を育て、自然と共生する農法を実践
+                            </p>
+                        </div>
+                        <div class="text-center pillar-card">
+                            <div class="bg-blue-500 text-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-people-carry text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">つながる</h3>
+                            <p class="text-gray-600">
+                                地域の方々と協働し、世代を超えた交流を深める
+                            </p>
+                        </div>
+                        <div class="text-center pillar-card">
+                            <div class="bg-purple-500 text-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-recycle text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">循環する</h3>
+                            <p class="text-gray-600">
+                                堆肥づくりから始める循環型農業の実践
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 活動内容 -->
+        <section class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 section-title">活動内容</h2>
+
+                <div class="max-w-6xl mx-auto">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- 畑での活動 -->
+                        <div class="bg-white rounded-lg shadow-lg p-6 activity-card">
+                            <img src="こども館での活動/畑作業1.jpg" alt="畑での活動" class="w-full h-64 object-cover rounded-lg mb-4">
+                            <h3 class="text-2xl font-semibold mb-3">畑での活動</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>土づくり・堆肥作り</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>種まき・苗の植え付け</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>日々の手入れ・観察</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>収穫作業</li>
+                            </ul>
+                        </div>
+
+                        <!-- コミュニティ活動 -->
+                        <div class="bg-white rounded-lg shadow-lg p-6 activity-card">
+                            <img src="こども館での活動/交流2.jpg" alt="コミュニティ活動" class="w-full h-64 object-cover rounded-lg mb-4">
+                            <h3 class="text-2xl font-semibold mb-3">コミュニティ活動</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>地域の方々との農作業</li>
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>こども館での野菜栽培教室</li>
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>収穫祭の開催</li>
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>畑のマルシェ運営</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 今年の収穫 -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 section-title">今年の収穫</h2>
+
+                <div class="gallery-grid max-w-6xl mx-auto">
+                    <div class="harvest-card bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+                            <i class="fas fa-pepper-hot text-white text-6xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">トマト</h3>
+                            <p class="text-gray-600">完熟の美味しさ！ミニトマトから大玉まで様々な品種を栽培</p>
+                            <p class="text-2xl font-bold text-red-600 mt-3">収穫量: 150kg</p>
+                        </div>
+                    </div>
+
+                    <div class="harvest-card bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                            <i class="fas fa-leaf text-white text-6xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">葉物野菜</h3>
+                            <p class="text-gray-600">レタス、キャベツ、ほうれん草など新鮮な葉物野菜</p>
+                            <p class="text-2xl font-bold text-green-600 mt-3">収穫量: 80kg</p>
+                        </div>
+                    </div>
+
+                    <div class="harvest-card bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                            <i class="fas fa-carrot text-white text-6xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">根菜類</h3>
+                            <p class="text-gray-600">にんじん、大根、じゃがいもなど土の恵み</p>
+                            <p class="text-2xl font-bold text-orange-600 mt-3">収穫量: 120kg</p>
+                        </div>
+                    </div>
+
+                    <div class="harvest-card bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-eggplant text-white text-6xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">なす・きゅうり</h3>
+                            <p class="text-gray-600">夏野菜の代表格！みずみずしい採れたて野菜</p>
+                            <p class="text-2xl font-bold text-purple-600 mt-3">収穫量: 100kg</p>
+                        </div>
+                    </div>
+
+                    <div class="harvest-card bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
+                            <i class="fas fa-corn text-white text-6xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">とうもろこし</h3>
+                            <p class="text-gray-600">甘みたっぷり！朝採れとうもろこしは格別の美味しさ</p>
+                            <p class="text-2xl font-bold text-yellow-600 mt-3">収穫量: 200本</p>
+                        </div>
+                    </div>
+
+                    <div class="harvest-card bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
+                            <i class="fas fa-strawberry text-white text-6xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">いちご</h3>
+                            <p class="text-gray-600">甘酸っぱい春の味覚！子どもたちに大人気</p>
+                            <p class="text-2xl font-bold text-pink-600 mt-3">収穫量: 30kg</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <p class="text-2xl font-bold text-gray-800">
+                        年間総収穫量: <span class="text-4xl text-green-600">680kg</span>
+                    </p>
+                    <p class="text-gray-600 mt-2">全て無農薬・有機栽培で育てました！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 参加者の声 -->
+        <section class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 section-title">参加者の声</h2>
+
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-6 shadow-lg voice-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-purple-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold">高校2年生</p>
+                                <p class="text-sm text-gray-600">メンバー</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">
+                            「土に触れることで、食べ物の大切さを実感しました。自分で育てた野菜は格別に美味しいです！」
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-lg voice-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-green-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold">地域住民</p>
+                                <p class="text-sm text-gray-600">60代</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">
+                            「若い人たちと一緒に作業するのが楽しみです。彼らの熱意に元気をもらっています。」
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-lg voice-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-child text-blue-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold">こども館の子ども</p>
+                                <p class="text-sm text-gray-600">小学3年生</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">
+                            「野菜が苦手だったけど、自分で育てた野菜は食べられるようになりました！」
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-lg voice-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-orange-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold">保護者</p>
+                                <p class="text-sm text-gray-600">40代</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">
+                            「子どもが野菜の成長を楽しみにしています。食育の良い機会になっています。」
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-20 gradient-bg text-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-4xl font-bold mb-6">一緒に「つちのわ」を広げませんか？</h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">
+                    私たちは、より多くの方々と共に持続可能な農業と地域づくりを目指しています。
+                    ぜひ、あなたも「つちのわ」の一員になってください。
+                </p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="contact.html" class="bg-white text-purple-700 px-8 py-4 rounded-full font-semibold hover:bg-purple-100 transition">
+                        <i class="fas fa-envelope mr-2"></i>お問い合わせ
+                    </a>
+                    <a href="marche.html" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-700 transition">
+                        <i class="fas fa-store mr-2"></i>畑のマルシェへ
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- フッター -->
+        <footer class="bg-gray-800 text-white py-8">
+            <div class="container mx-auto px-4 text-center">
+                <p>© 2025 雲雀丘学園高等学校 地域共生ゼミ. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // GSAP アニメーション
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ヒーローアニメーション
+        gsap.from(".hero-title", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            delay: 0.5
+        });
+
+        gsap.from(".hero-subtitle", {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.8
+        });
+
+        gsap.from(".scroll-btn", {
+            opacity: 0,
+            scale: 0.8,
+            duration: 1,
+            delay: 1.2
+        });
+
+        // セクションアニメーション
+        gsap.utils.toArray(".section-title").forEach(title => {
+            gsap.from(title, {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                scrollTrigger: {
+                    trigger: title,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        // カードアニメーション
+        gsap.utils.toArray(".pillar-card").forEach((card, index) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 50,
+                duration: 0.6,
+                delay: index * 0.2,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        gsap.utils.toArray(".activity-card").forEach((card, index) => {
+            gsap.from(card, {
+                opacity: 0,
+                x: index % 2 === 0 ? -50 : 50,
+                duration: 0.8,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        gsap.utils.toArray(".harvest-card").forEach((card, index) => {
+            gsap.from(card, {
+                opacity: 0,
+                scale: 0.9,
+                duration: 0.6,
+                delay: index * 0.1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        gsap.utils.toArray(".voice-card").forEach((card, index) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 30,
+                duration: 0.6,
+                delay: index * 0.15,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        // スムーズスクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

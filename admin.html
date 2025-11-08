@@ -88,6 +88,65 @@
             </div>
         </div>
 
+        <!-- サイトアクセス管理セクション -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold mb-6">サイトアクセス管理</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- アクセス状態 -->
+                <div class="border rounded-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">アクセス状態</h3>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-2">現在のステータス:</p>
+                            <p id="siteStatus" class="text-2xl font-bold text-green-600">
+                                <i class="fas fa-check-circle mr-2"></i>公開中
+                            </p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="siteToggle" class="sr-only peer" checked onchange="toggleSiteAccess()">
+                            <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- メンテナンスメッセージ -->
+                <div class="border rounded-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">メンテナンスメッセージ</h3>
+                    <textarea id="maintenanceMessage"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                              rows="3"
+                              placeholder="メンテナンス中に表示するメッセージ">
+システムメンテナンス中です。しばらくお待ちください。
+                    </textarea>
+                    <button onclick="saveMaintenanceMessage()"
+                            class="mt-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm">
+                        <i class="fas fa-save mr-2"></i>保存
+                    </button>
+                </div>
+            </div>
+
+            <!-- アクセス制限設定 -->
+            <div class="mt-6 border-t pt-6">
+                <h3 class="text-lg font-semibold mb-4">アクセス制限オプション</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="allowAdmin" class="mr-3" checked>
+                        <span>管理者はメンテナンス中でもアクセス可能</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="showCountdown" class="mr-3">
+                        <span>メンテナンス終了予定時刻を表示</span>
+                    </label>
+                    <div id="countdownSettings" class="ml-6 hidden">
+                        <label class="block text-sm text-gray-600 mb-2">終了予定時刻:</label>
+                        <input type="datetime-local" id="maintenanceEnd"
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- コード管理セクション -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
             <div class="flex justify-between items-center mb-6">
@@ -132,7 +191,13 @@
 
         <!-- アクセスログセクション -->
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-6">アクセスログ（直近50件）</h2>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">アクセスログ（直近50件）</h2>
+                <button onclick="resetAccessLogs()"
+                        class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                    <i class="fas fa-trash-alt mr-2"></i>インプレッション数をリセット
+                </button>
+            </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -279,6 +344,7 @@
             document.getElementById('adminLogin').classList.add('hidden');
             document.getElementById('adminPanel').classList.remove('hidden');
             loadDashboard();
+            initSiteAccessManagement();
         }
 
         // ダッシュボードの読み込み
@@ -415,9 +481,114 @@
             }
         }
 
+        // アクセスログのリセット
+        async function resetAccessLogs() {
+            if (!confirm('本当にインプレッション数（アクセスログ）をリセットしますか？\nこの操作は元に戻せません。')) {
+                return;
+            }
+
+            try {
+                // すべてのアクセスログを削除
+                const { error } = await supabaseClient
+                    .from('access_logs')
+                    .delete()
+                    .neq('id', 0); // すべてのレコードを削除（neqは"not equal"の意味）
+
+                if (error) {
+                    console.error('Error resetting logs:', error);
+                    alert('インプレッション数のリセットに失敗しました。');
+                } else {
+                    alert('インプレッション数をリセットしました。');
+                    // ログとカウントを再読み込み
+                    loadLogs();
+                }
+            } catch (error) {
+                console.error('Error resetting logs:', error);
+                alert('インプレッション数のリセットに失敗しました。');
+            }
+        }
+
         // 統計情報の読み込み
         async function loadStatistics() {
             // この関数は loadCodes と loadLogs で既に実装済み
+        }
+
+        // サイトアクセス管理機能
+        function initSiteAccessManagement() {
+            // LocalStorageから設定を読み込み
+            const siteSettings = localStorage.getItem('siteSettings');
+            if (siteSettings) {
+                const settings = JSON.parse(siteSettings);
+                const toggle = document.getElementById('siteToggle');
+                const status = document.getElementById('siteStatus');
+
+                if (settings.isPublic !== undefined) {
+                    toggle.checked = settings.isPublic;
+                    updateSiteStatusDisplay(settings.isPublic);
+                }
+
+                if (settings.maintenanceMessage) {
+                    document.getElementById('maintenanceMessage').value = settings.maintenanceMessage;
+                }
+
+                if (settings.allowAdmin !== undefined) {
+                    document.getElementById('allowAdmin').checked = settings.allowAdmin;
+                }
+            }
+
+            // カウントダウン設定の表示切り替え
+            document.getElementById('showCountdown').addEventListener('change', function() {
+                const countdownSettings = document.getElementById('countdownSettings');
+                if (this.checked) {
+                    countdownSettings.classList.remove('hidden');
+                } else {
+                    countdownSettings.classList.add('hidden');
+                }
+            });
+        }
+
+        function toggleSiteAccess() {
+            const toggle = document.getElementById('siteToggle');
+            const isPublic = toggle.checked;
+
+            updateSiteStatusDisplay(isPublic);
+            saveSiteSettings();
+
+            // メッセージ表示
+            if (isPublic) {
+                alert('サイトを公開しました。');
+            } else {
+                alert('サイトをメンテナンスモードに切り替えました。');
+            }
+        }
+
+        function updateSiteStatusDisplay(isPublic) {
+            const status = document.getElementById('siteStatus');
+            if (isPublic) {
+                status.innerHTML = '<i class="fas fa-check-circle mr-2"></i>公開中';
+                status.className = 'text-2xl font-bold text-green-600';
+            } else {
+                status.innerHTML = '<i class="fas fa-lock mr-2"></i>メンテナンス中';
+                status.className = 'text-2xl font-bold text-red-600';
+            }
+        }
+
+        function saveMaintenanceMessage() {
+            saveSiteSettings();
+            alert('メンテナンスメッセージを保存しました。');
+        }
+
+        function saveSiteSettings() {
+            const settings = {
+                isPublic: document.getElementById('siteToggle').checked,
+                maintenanceMessage: document.getElementById('maintenanceMessage').value,
+                allowAdmin: document.getElementById('allowAdmin').checked,
+                showCountdown: document.getElementById('showCountdown').checked,
+                maintenanceEnd: document.getElementById('maintenanceEnd').value,
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('siteSettings', JSON.stringify(settings));
         }
 
         // コードの有効/無効切り替え

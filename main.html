@@ -22,6 +22,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -193,6 +196,17 @@
             animation: fadeInUp 0.8s ease-out forwards;
         }
 
+        /* Impact Cards - 初期状態を非表示に設定 */
+        .impact-card {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .impact-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* スムーズなボタントランジション */
         button, a {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -220,15 +234,183 @@
         .auth-required.authenticated {
             display: block;
         }
+
+        /* モバイル対応の追加スタイル */
+        @media (max-width: 768px) {
+            /* ヒーローセクションのタイトルサイズ調整 */
+            .hero-title {
+                font-size: 3rem !important;
+                line-height: 1.2;
+            }
+
+            .hero-subtitle {
+                font-size: 1.5rem !important;
+            }
+
+            .hero-description {
+                font-size: 1rem !important;
+                padding: 0 1rem;
+            }
+
+            /* セクションのパディング調整 */
+            section {
+                padding: 3rem 1rem;
+            }
+
+            /* カードのマージン調整 */
+            .card-shadow {
+                margin: 0.5rem;
+            }
+
+            /* モダンカードのパディング調整 */
+            .modern-card {
+                padding: 1.5rem;
+            }
+
+            /* 五感の円のサイズ調整 */
+            .sense-circle {
+                width: 100px;
+                height: 100px;
+                font-size: 0.9rem;
+            }
+
+            /* インパクトカードの間隔調整 */
+            .impact-card {
+                margin-bottom: 1.5rem;
+            }
+
+            /* モバイルメニューのアニメーション改善 */
+            #mobileMenu > div {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+
+            #mobileMenu:not(.hidden) > div {
+                transform: translateX(0);
+            }
+
+            /* グラフやチャートのサイズ調整 */
+            canvas {
+                max-width: 100%;
+                height: auto !important;
+            }
+
+            /* セクションタイトルのフォントサイズ調整 */
+            .section-title {
+                font-size: 2.5rem !important;
+            }
+
+            /* テキストの可読性向上 */
+            p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+            }
+        }
+
+        @media (max-width: 640px) {
+            /* より小さい画面用の調整 */
+            .hero-title {
+                font-size: 2rem !important;
+            }
+
+            .hero-subtitle {
+                font-size: 1.25rem !important;
+            }
+
+            /* セクションタイトルのさらなる調整 */
+            .section-title {
+                font-size: 2rem !important;
+            }
+
+            /* 五感の円のさらなる調整 */
+            .sense-circle {
+                width: 80px;
+                height: 80px;
+                font-size: 0.8rem;
+            }
+
+            /* インパクトカードのテキスト調整 */
+            .impact-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .impact-card p {
+                font-size: 0.9rem;
+            }
+
+            /* スキップボタンとミュートボタンの位置調整 */
+            #skipIntro {
+                bottom: 1rem;
+                left: 1rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            #muteToggle {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.5rem;
+            }
+
+            /* ナビゲーションバーのテキスト調整 */
+            nav a {
+                font-size: 0.9rem;
+            }
+
+            /* ボタンのサイズ調整 */
+            button {
+                font-size: 0.9rem;
+                padding: 0.75rem 1.5rem;
+            }
+
+            /* 音声選択モーダルのパディング調整 */
+            #audioSelectModal .p-8 {
+                padding: 1.5rem;
+            }
+
+            /* モバイルメニューの幅調整 */
+            #mobileMenu > div {
+                width: 80%;
+            }
+        }
     </style>
 </head>
 <body style="background-color: var(--minimal-light);">
 
+    <!-- 音声選択モーダル -->
+    <div id="audioSelectModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60]" style="display: none;">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all">
+            <div class="text-center">
+                <i class="fas fa-volume-up text-5xl text-orange-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">音声設定の選択</h2>
+                <p class="text-gray-600 mb-8">動画再生時の音声設定を選択してください</p>
+
+                <div class="space-y-4">
+                    <button onclick="selectAudioPreference(true)"
+                            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 px-6 rounded-lg font-medium hover:opacity-90 transition duration-200 transform hover:scale-105 flex items-center justify-center">
+                        <i class="fas fa-volume-up mr-3"></i>
+                        音声あり（推奨）
+                    </button>
+
+                    <button onclick="selectAudioPreference(false)"
+                            class="w-full bg-gray-200 text-gray-700 py-4 px-6 rounded-lg font-medium hover:bg-gray-300 transition duration-200 transform hover:scale-105 flex items-center justify-center">
+                        <i class="fas fa-volume-mute mr-3"></i>
+                        音声なし（ミュート）
+                    </button>
+                </div>
+
+                <p class="text-xs text-gray-500 mt-6">
+                    ※後から変更可能です
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- 動画オーバーレイ（15秒のオープニング） -->
-    <div id="videoOverlay">
+    <div id="videoOverlay" style="display: none;">
         <div class="relative w-full h-full">
             <!-- 動画プレースホルダー -->
-            <video id="openingVideo" class="w-full h-full object-cover" muted autoplay>
+            <video id="openingVideo" class="w-full h-full object-cover" muted autoplay playsinline>
                 <source src="./download.MP4" type="video/mp4">
                 <!-- フォールバック：動画が読み込めない場合のアニメーション -->
             </video>
@@ -285,8 +467,12 @@
                             高校生の思い
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
                         </a>
+                        <a href="./activities.html" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
+                            活動紹介
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
                         <a href="./presenters.html" class="nav-link text-sm font-medium text-gray-600 hover:text-orange-500 relative group">
-                            登壇者紹介
+                            メンバー紹介
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
                         </a>
                     </div>
@@ -310,7 +496,8 @@
                     <a href="#solution" class="block py-2 text-gray-700">ソリューション</a>
                     <a href="#impact" class="block py-2 text-gray-700">インパクト</a>
                     <a href="#thoughts" class="block py-2 text-gray-700">高校生の思い</a>
-                    <a href="./presenters.html" class="block py-2 text-gray-700">登壇者紹介</a>
+                    <a href="./activities.html" class="block py-2 text-gray-700">活動紹介</a>
+                    <a href="./presenters.html" class="block py-2 text-gray-700">メンバー紹介</a>
                 </div>
             </div>
         </div>
@@ -349,9 +536,14 @@
                     </div>
                 </div>
 
-                <a href="#problem" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-orange-600 transition transform hover:scale-105">
-                    ストーリーを見る <i class="fas fa-arrow-down ml-2"></i>
-                </a>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <a href="#problem" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-orange-600 transition transform hover:scale-105">
+                        ストーリーを見る <i class="fas fa-arrow-down ml-2"></i>
+                    </a>
+                    <a href="./activities.html" class="inline-block bg-green-500 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-green-600 transition transform hover:scale-105">
+                        活動紹介を見る <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -370,9 +562,9 @@
                         <p class="text-gray-500 mt-3 text-sm">児童館利用率の激減（5年間）</p>
                     </div>
                     <div class="stat-card modern-card text-center">
-                        <div class="stat-number text-6xl font-bold text-green-500 mb-3" data-value="11.5">0</div>
+                        <div class="stat-number text-6xl font-bold text-green-500 mb-3" data-value="15.4">0</div>
                         <div class="text-xl text-gray-700 font-medium">%</div>
-                        <p class="text-gray-500 mt-3 text-sm">子どもの貧困率</p>
+                        <p class="text-gray-500 mt-3 text-sm">日本の相対的貧困率</p>
                     </div>
                     <div class="stat-card modern-card text-center">
                         <div class="stat-number text-6xl font-bold text-brown-600 mb-3" data-value="52.3">0</div>
@@ -408,8 +600,12 @@
         <section id="solution" class="py-24 md:py-32 bg-white">
             <div class="container mx-auto px-4">
                 <h2 class="section-title text-5xl md:text-6xl font-bold text-center mb-16 tracking-tight" style="color: var(--minimal-dark);">
-                    五感を使った農業体験プログラム
+                    「つちのわ」プログラム
                 </h2>
+                <p class="text-center text-xl text-gray-600 mb-16 max-w-3xl mx-auto">
+                    五感を刺激する農業体験プログラム<br>
+                    畑の土から、分断されつつある子どもたちが輪のようにつながってほしいという思いから
+                </p>
 
                 <!-- プログラム概要 -->
                 <div class="grid md:grid-cols-2 gap-12 mb-16">
@@ -417,13 +613,13 @@
                         <div class="bg-green-100 h-96 rounded-2xl flex items-center justify-center">
                             <div class="text-center">
                                 <i class="fas fa-seedling text-6xl text-green-500 mb-4"></i>
-                                <p class="text-xl text-gray-700">農業体験イメージ</p>
+                                <p class="text-xl text-gray-700">つちのわプログラム</p>
                             </div>
                         </div>
                     </div>
                     <div class="program-description flex items-center">
                         <div>
-                            <h3 class="text-2xl font-bold mb-4">なぜ農業×五感なのか？</h3>
+                            <h3 class="text-2xl font-bold mb-4">なぜ五感を使った体験なのか？</h3>
                             <ul class="space-y-3">
                                 <li class="flex items-start">
                                     <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
@@ -535,6 +731,25 @@
             </div>
         </section>
 
+        <!-- CTA：活動紹介 -->
+        <section class="py-16 bg-gradient-to-r from-green-500 to-green-600 text-white">
+            <div class="container mx-auto px-4 text-center">
+                <h3 class="text-3xl md:text-4xl font-bold mb-6">私たちの活動をもっと知りたい方へ</h3>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">
+                    子ども館での勉強会、100人お米作りプロジェクトなど、<br>
+                    実際の活動の様子を写真と共にご覧いただけます。
+                </p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <a href="./activities.html" class="bg-white text-green-600 px-8 py-4 rounded-full text-lg font-bold hover:bg-gray-100 transition transform hover:scale-105">
+                        <i class="fas fa-images mr-2"></i>活動紹介を見る
+                    </a>
+                    <a href="./tsuchinowa.html" class="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-white hover:text-green-600 transition transform hover:scale-105">
+                        <i class="fas fa-seedling mr-2"></i>つちのわプログラムを見る
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- 現役高校生の思いセクション -->
         <section id="thoughts" class="py-24 md:py-32 bg-white">
             <div class="container mx-auto px-4">
@@ -601,13 +816,46 @@
                     小さな一歩が、大きな変化を生み出します。
                 </p>
 
-                <!-- QRコード表示エリア -->
-                <div class="qr-section bg-white rounded-2xl p-8 max-w-md mx-auto mb-12">
-                    <h3 class="text-gray-800 font-bold mb-4">プレゼン資料はこちら</h3>
-                    <div class="bg-gray-200 w-48 h-48 mx-auto mb-4 flex items-center justify-center">
-                        <i class="fas fa-qrcode text-6xl text-gray-400"></i>
+                <!-- 資料ダウンロードセクション -->
+                <div class="qr-section bg-white rounded-2xl p-8 max-w-2xl mx-auto mb-12">
+                    <h3 class="text-gray-800 font-bold text-2xl mb-6">プレゼン資料・リソース</h3>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- QRコード -->
+                        <div class="text-center">
+                            <h4 class="text-gray-700 font-semibold mb-3">サイト共有用QRコード</h4>
+                            <div id="qrcode" class="bg-white p-4 inline-block rounded-lg shadow-md mb-3"></div>
+                            <p class="text-gray-600 text-sm">このサイトを共有</p>
+                        </div>
+
+                        <!-- ダウンロードリンク -->
+                        <div>
+                            <h4 class="text-gray-700 font-semibold mb-4">資料ダウンロード</h4>
+                            <div class="space-y-3">
+                                <a href="スライド/地域共生スライド (1).pdf" download class="flex items-center justify-between bg-gradient-orange text-white px-4 py-3 rounded-lg hover:opacity-90 transition">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-file-pdf mr-2"></i>
+                                        プレゼンスライド
+                                    </span>
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                <a href="補足資料/高校生がつなぐ地域共生社会.docx" download class="flex items-center justify-between bg-gradient-green text-white px-4 py-3 rounded-lg hover:opacity-90 transition">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-file-word mr-2"></i>
+                                        補足資料
+                                    </span>
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                <button onclick="viewSupplementary()" class="w-full flex items-center justify-between bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-eye mr-2"></i>
+                                        資料内容を見る
+                                    </span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-gray-600 text-sm">QRコードを読み取ってください</p>
                 </div>
 
                 <!-- SNSシェアボタン -->
@@ -655,15 +903,16 @@
                     <div>
                         <h3 class="text-xl font-bold mb-4">リンク</h3>
                         <ul class="space-y-2 text-gray-400">
-                            <li><a href="./presenters.html" class="hover:text-white transition">登壇者紹介</a></li>
-                            <li><a href="#" class="hover:text-white transition">プライバシーポリシー</a></li>
-                            <li><a href="#" class="hover:text-white transition">お問い合わせ</a></li>
+                            <li><a href="./activities.html" class="hover:text-white transition">活動紹介</a></li>
+                            <li><a href="./presenters.html" class="hover:text-white transition">メンバー紹介</a></li>
+                            <li><a href="./tsuchinowa.html" class="hover:text-white transition">つちのわプログラム</a></li>
+                            <li><a href="./contact.html" class="hover:text-white transition">お問い合わせ</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="mt-8 pt-8 border-t border-gray-700 text-center">
                     <p class="text-gray-400">
-                        © 2025 雲雀丘学園高等学校. All rights reserved.
+                        © 2025 雲雀丘学園高等学校 地域共生ゼミ. All rights reserved.
                     </p>
                 </div>
             </div>
@@ -689,20 +938,207 @@
         </div>
     </div>
 
+    <!-- 補足資料モーダル -->
+    <div id="supplementaryModal" class="fixed inset-0 bg-black/50 z-50 hidden overflow-auto">
+        <div class="flex items-start justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl max-w-4xl w-full p-8 my-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-3xl font-bold">補足資料：高校生がつなぐ地域共生社会</h3>
+                    <button onclick="hideSupplementary()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="prose max-w-none">
+                    <h4 class="text-2xl font-semibold mt-6 mb-4">プロジェクト概要</h4>
+                    <p class="mb-4">
+                        私たち雲雀丘学園高等学校 地域共生ゼミは、「つちのわ」プロジェクトを通じて、
+                        地域社会における世代間交流と持続可能な農業の実践に取り組んでいます。
+                    </p>
+
+                    <h4 class="text-2xl font-semibold mt-6 mb-4">活動内容</h4>
+                    <ul class="list-disc list-inside space-y-2 mb-6">
+                        <li>無農薬・有機栽培による野菜づくり</li>
+                        <li>地域の子どもたちへの農業体験教室</li>
+                        <li>高齢者との協働作業による世代間交流</li>
+                        <li>畑のマルシェを通じた地域経済の活性化</li>
+                        <li>食育活動と環境教育の実施</li>
+                    </ul>
+
+                    <h4 class="text-2xl font-semibold mt-6 mb-4">これまでの成果</h4>
+                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                        <div class="grid md:grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-3xl font-bold text-orange-500">680kg</p>
+                                <p class="text-gray-600">年間収穫量</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-green-500">300名</p>
+                                <p class="text-gray-600">月間マルシェ来場者</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-blue-500">50名</p>
+                                <p class="text-gray-600">参加児童数</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-2xl font-semibold mt-6 mb-4">地域への影響</h4>
+                    <p class="mb-4">
+                        このプロジェクトは、以下のような positive な影響を地域にもたらしています：
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 mb-6">
+                        <li>高齢者の孤立防止と生きがいづくり</li>
+                        <li>子どもたちの食への関心と理解の向上</li>
+                        <li>地域コミュニティの強化</li>
+                        <li>循環型社会の実現への貢献</li>
+                    </ul>
+
+                    <h4 class="text-2xl font-semibold mt-6 mb-4">今後の展望</h4>
+                    <p class="mb-4">
+                        私たちは、この活動をさらに発展させ、より多くの人々を巻き込んだ
+                        持続可能な地域共生社会の実現を目指しています。具体的には：
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 mb-6">
+                        <li>活動規模の拡大（新たな畑の開拓）</li>
+                        <li>他校との連携による活動の横展開</li>
+                        <li>オンライン農業体験の実施</li>
+                        <li>地域ブランド野菜の開発</li>
+                    </ul>
+
+                    <div class="bg-blue-50 p-6 rounded-lg mt-6">
+                        <p class="text-lg font-semibold text-blue-800 mb-2">
+                            <i class="fas fa-info-circle mr-2"></i>詳細な資料について
+                        </p>
+                        <p class="text-gray-700">
+                            より詳細な活動報告書や統計データは、上記のダウンロードボタンから
+                            Word文書をダウンロードしてご確認ください。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <a href="補足資料/高校生がつなぐ地域共生社会.docx" download class="bg-gradient-green text-white px-6 py-3 rounded-lg hover:opacity-90 transition">
+                        <i class="fas fa-download mr-2"></i>資料をダウンロード
+                    </a>
+                    <button onclick="hideSupplementary()" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition">
+                        閉じる
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 認証チェック
-        function checkAuth() {
-            const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
-            if (!isAuthenticated) {
-                window.location.href = './login.html';
-                return false;
+        // メンテナンスモードチェック
+        function checkMaintenanceMode() {
+            const settings = localStorage.getItem('siteSettings');
+            if (settings) {
+                const siteSettings = JSON.parse(settings);
+
+                // サイトがメンテナンス中の場合
+                if (!siteSettings.isPublic) {
+                    // 管理者セッションをチェック
+                    const adminSession = sessionStorage.getItem('adminAuthenticated');
+
+                    // 管理者でない、または管理者アクセスが許可されていない場合
+                    if (adminSession !== 'true' || !siteSettings.allowAdmin) {
+                        // メンテナンスページへリダイレクト
+                        window.location.href = 'maintenance.html';
+                        return false;
+                    } else {
+                        // 管理者通知を表示
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed top-4 right-4 bg-orange-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                        notification.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>メンテナンスモード中（管理者として閲覧）';
+                        document.body.appendChild(notification);
+                    }
+                }
             }
             return true;
         }
 
-        // ページ読み込み時の認証チェック
+        // 認証チェック（無効化 - 公開アクセス可能）
+        function checkAuth() {
+            // まずメンテナンスモードをチェック
+            if (!checkMaintenanceMode()) {
+                return false;
+            }
+            // 認証不要 - 常にtrueを返す
+            return true;
+        }
+
+        // 音声選択機能
+        let selectedAudioPreference = null;
+
+        function selectAudioPreference(withAudio) {
+            selectedAudioPreference = withAudio;
+            const modal = document.getElementById('audioSelectModal');
+            const videoOverlay = document.getElementById('videoOverlay');
+            const video = document.getElementById('openingVideo');
+
+            // モーダルを非表示
+            modal.style.display = 'none';
+
+            // 動画オーバーレイを表示
+            videoOverlay.style.display = 'block';
+
+            // 音声設定を適用
+            if (withAudio) {
+                video.muted = false;
+                document.getElementById('muteToggle').innerHTML = '<i class="fas fa-volume-up text-xl"></i>';
+            } else {
+                video.muted = true;
+                document.getElementById('muteToggle').innerHTML = '<i class="fas fa-volume-mute text-xl"></i>';
+            }
+
+            // 動画を再生
+            video.play().then(() => {
+                console.log('動画再生開始（音声選択後）');
+            }).catch(err => {
+                console.error('動画再生エラー:', err);
+                // フォールバックを表示
+                document.getElementById('videoFallback').style.display = 'flex';
+                video.style.display = 'none';
+            });
+
+            // 選択を保存
+            localStorage.setItem('audioPreference', withAudio ? 'on' : 'off');
+
+            // 15秒タイマーを開始
+            startVideoTimer();
+        }
+
+        // 動画タイマー機能
+        function startVideoTimer() {
+            const videoOverlay = document.getElementById('videoOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            const transitionToMain = () => {
+                gsap.timeline()
+                    .to(videoOverlay, {
+                        opacity: 0,
+                        duration: 1,
+                        onComplete: () => {
+                            videoOverlay.style.display = 'none';
+                        }
+                    })
+                    .to(mainContent, {
+                        opacity: 1,
+                        duration: 1,
+                        onComplete: () => {
+                            initAnimations();
+                        }
+                    });
+            };
+
+            // 15秒後に自動的にメインコンテンツへ
+            setTimeout(transitionToMain, 15000);
+        }
+
+        // ページ読み込み時の処理
         window.addEventListener('DOMContentLoaded', function() {
-            if (!checkAuth()) return;
+            // 認証チェックをスキップ
 
             // GSAPの初期化
             gsap.registerPlugin(ScrollTrigger, TextPlugin);
@@ -713,6 +1149,66 @@
             const mainContent = document.getElementById('mainContent');
             const skipBtn = document.getElementById('skipIntro');
             const muteBtn = document.getElementById('muteToggle');
+            const audioModal = document.getElementById('audioSelectModal');
+
+            // 動画のメタデータが読み込まれたら
+            video.addEventListener('loadedmetadata', function() {
+                console.log('動画メタデータ読み込み完了');
+                console.log('動画長さ:', video.duration, '秒');
+            });
+
+            // 動画の読み込み開始
+            video.load();
+
+            // 初回訪問チェック
+            const isFirstVisit = !localStorage.getItem('hasVisited');
+            if (isFirstVisit) {
+                // 初回訪問時はスキップボタンを非表示
+                skipBtn.style.display = 'none';
+                // 訪問済みフラグを設定
+                localStorage.setItem('hasVisited', 'true');
+            } else {
+                // 2回目以降はスキップボタンを表示
+                skipBtn.style.display = 'block';
+            }
+
+            // 音声選択モーダルの表示（保存された設定がない場合）
+            const savedAudioPreference = localStorage.getItem('audioPreference');
+
+            // 動画オーバーレイを表示
+            videoOverlay.style.display = 'block';
+
+            if (!savedAudioPreference) {
+                // 音声選択モーダルを表示
+                audioModal.style.display = 'flex';
+                // デフォルトでミュート状態で動画を再生
+                video.muted = true;
+                video.play().then(() => {
+                    console.log('動画再生開始（初回・ミュート）');
+                }).catch(err => {
+                    console.error('動画再生エラー:', err);
+                    document.getElementById('videoFallback').style.display = 'flex';
+                    video.style.display = 'none';
+                });
+            } else {
+                // 保存された設定を適用
+                if (savedAudioPreference === 'on') {
+                    video.muted = false;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-up text-xl"></i>';
+                } else {
+                    video.muted = true;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-mute text-xl"></i>';
+                }
+                video.play().then(() => {
+                    console.log('動画再生開始');
+                }).catch(err => {
+                    console.error('動画再生エラー:', err);
+                    document.getElementById('videoFallback').style.display = 'flex';
+                    video.style.display = 'none';
+                });
+                // 既に保存された設定がある場合もタイマーを開始
+                startVideoTimer();
+            }
 
             // 動画エラー時の処理
             video.addEventListener('error', function() {
@@ -720,27 +1216,24 @@
                 video.style.display = 'none';
             });
 
-            // 15秒後に自動的にメインコンテンツへ
-            const transitionToMain = () => {
-                gsap.to(videoOverlay, {
-                    opacity: 0,
-                    duration: 1,
-                    onComplete: () => {
-                        videoOverlay.style.display = 'none';
-                        gsap.to(mainContent, {
-                            opacity: 1,
-                            duration: 1
-                        });
-                        initAnimations();
-                    }
-                });
-            };
-
-            // 15秒タイマー
-            setTimeout(transitionToMain, 15000);
-
             // スキップボタン
-            skipBtn.addEventListener('click', transitionToMain);
+            skipBtn.addEventListener('click', () => {
+                gsap.timeline()
+                    .to(videoOverlay, {
+                        opacity: 0,
+                        duration: 1,
+                        onComplete: () => {
+                            videoOverlay.style.display = 'none';
+                        }
+                    })
+                    .to(mainContent, {
+                        opacity: 1,
+                        duration: 1,
+                        onComplete: () => {
+                            initAnimations();
+                        }
+                    });
+            });
 
             // ミュートボタン
             muteBtn.addEventListener('click', () => {
@@ -827,15 +1320,22 @@
 
                 // カードのアニメーション
                 gsap.utils.toArray('.impact-card').forEach((card, index) => {
+                    // 初期状態を確実に設定
+                    gsap.set(card, {
+                        y: 50,
+                        opacity: 0
+                    });
+
                     ScrollTrigger.create({
                         trigger: card,
                         start: 'top 80%',
                         onEnter: () => {
-                            gsap.from(card, {
-                                y: 50,
-                                opacity: 0,
+                            gsap.to(card, {
+                                y: 0,
+                                opacity: 1,
                                 duration: 0.8,
-                                delay: index * 0.2
+                                delay: index * 0.2,
+                                ease: "power2.out"
                             });
                         },
                         once: true
@@ -934,6 +1434,34 @@
 
         function hideContactForm() {
             document.getElementById('contactModal').classList.add('hidden');
+        }
+
+        // QRコード生成
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrcodeElement = document.getElementById('qrcode');
+            if (qrcodeElement) {
+                // 現在のページURLを取得
+                const currentURL = window.location.href;
+
+                // QRコードを生成
+                new QRCode(qrcodeElement, {
+                    text: currentURL,
+                    width: 180,
+                    height: 180,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+        });
+
+        // 補足資料内容表示
+        function viewSupplementary() {
+            document.getElementById('supplementaryModal').classList.remove('hidden');
+        }
+
+        function hideSupplementary() {
+            document.getElementById('supplementaryModal').classList.add('hidden');
         }
     </script>
 </body>

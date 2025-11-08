@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地域共生ゼミ活動 - 高校生プレゼンテーションコンテスト2025</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            line-height: 1.8;
+        }
+
+        .gradient-green {
+            background: linear-gradient(135deg, #8BC34A 0%, #AED581 100%);
+        }
+
+        .image-hover {
+            transition: transform 0.3s ease;
+        }
+
+        .image-hover:hover {
+            transform: scale(1.05);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -8px;
+            width: 16px;
+            height: 16px;
+            background: #8BC34A;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #8BC34A, #AED581);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- ヘッダー -->
+    <header class="bg-white shadow-sm fixed top-0 w-full z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold text-gray-800">
+                    地域共生ゼミ活動
+                </h1>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="main.html" class="text-gray-600 hover:text-green-600">ホーム</a>
+                    <a href="tsuchinowa.html" class="text-gray-600 hover:text-green-600">つちのわ</a>
+                    <a href="marche.html" class="text-gray-600 hover:text-green-600">畑のマルシェ</a>
+                    <a href="contact.html" class="text-gray-600 hover:text-green-600">お問い合わせ</a>
+                </nav>
+                <!-- モバイルメニューボタン -->
+                <button id="mobileMenuBtn" class="md:hidden text-gray-600 hover:text-green-600">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- モバイルメニュー -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden">
+        <div class="bg-white w-64 h-full p-6">
+            <button id="closeMobileMenu" class="absolute top-4 right-4">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="mt-12 space-y-4">
+                <a href="main.html" class="block py-2 text-gray-700">ホーム</a>
+                <a href="tsuchinowa.html" class="block py-2 text-gray-700">つちのわ</a>
+                <a href="marche.html" class="block py-2 text-gray-700">畑のマルシェ</a>
+                <a href="contact.html" class="block py-2 text-gray-700">お問い合わせ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヒーローセクション -->
+    <section class="gradient-green text-white pt-24 pb-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-6 fade-in">
+                地域共生ゼミの活動
+            </h2>
+            <p class="text-xl text-center max-w-3xl mx-auto opacity-90">
+                宝塚市の子ども館から始まった、私たちの挑戦<br>
+                地域の子どもたちと共に歩む、共感力あふれる社会づくり
+            </p>
+        </div>
+    </section>
+
+    <!-- 活動概要 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h3 class="text-3xl font-bold text-center mb-8">活動の始まり</h3>
+                <div class="bg-green-50 p-8 rounded-2xl mb-12">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        私たち地域共生ゼミは、宝塚市社会福祉協議会からの依頼を受けて、
+                        地域の子ども館での学習支援活動を開始しました。
+                        しかし、そこで目にしたのは、想像以上に深刻な子どもたちの分断でした。
+                        経済格差、体験格差、そして関係性の希薄化。
+                        この現実に向き合い、高校生だからこそできる解決策を模索し続けています。
+                    </p>
+                </div>
+
+                <!-- 活動タイムライン -->
+                <h3 class="text-2xl font-bold mb-8">これまでの歩み</h3>
+                <div class="relative pl-8">
+                    <div class="timeline-line"></div>
+
+                    <div class="timeline-item mb-12 relative">
+                        <div class="timeline-dot"></div>
+                        <div class="ml-8">
+                            <h4 class="font-bold text-lg mb-2">2023年 春</h4>
+                            <p class="text-gray-600">
+                                宝塚市社会福祉協議会からの依頼を受け、子ども館での学習支援活動を開始
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item mb-12 relative">
+                        <div class="timeline-dot"></div>
+                        <div class="ml-8">
+                            <h4 class="font-bold text-lg mb-2">2023年 夏</h4>
+                            <p class="text-gray-600">
+                                子どもたちの格差問題に気づき、課題分析を開始。
+                                データ収集と現場観察を通じて、問題の本質を探る
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item mb-12 relative">
+                        <div class="timeline-dot"></div>
+                        <div class="ml-8">
+                            <h4 class="font-bold text-lg mb-2">2024年 春</h4>
+                            <p class="text-gray-600">
+                                「つちのわ」プログラムの構想を開始。
+                                五感を使った農業体験が子どもたちを繋ぐ可能性を発見
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item mb-12 relative">
+                        <div class="timeline-dot"></div>
+                        <div class="ml-8">
+                            <h4 class="font-bold text-lg mb-2">2024年 秋</h4>
+                            <p class="text-gray-600">
+                                試験的プログラムの実施と改善。
+                                子どもたちの変化を目の当たりに
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item relative">
+                        <div class="timeline-dot"></div>
+                        <div class="ml-8">
+                            <h4 class="font-bold text-lg mb-2">2025年 現在</h4>
+                            <p class="text-gray-600">
+                                高校生プレゼンテーションコンテストでの発表。
+                                全国への展開を目指して
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 活動写真ギャラリー -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h3 class="text-3xl font-bold text-center mb-12">活動の様子</h3>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="activity-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <div class="h-64 overflow-hidden">
+                        <img src="こども館での活動/12fa7b1181cec738fb30a8878a43446d.jpg"
+                             alt="子ども館での活動風景1"
+                             class="w-full h-full object-cover image-hover">
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg mb-2">学習支援活動</h4>
+                        <p class="text-gray-600 text-sm">
+                            子ども館で宿題を教えたり、一緒に遊んだり。
+                            子どもたちとの距離を縮めながら、彼らの現実を知りました。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="activity-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <div class="h-64 overflow-hidden">
+                        <img src="こども館での活動/18ee5b4010097c42248121e61328ee07.jpg"
+                             alt="子ども館での活動風景2"
+                             class="w-full h-full object-cover image-hover">
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg mb-2">体験プログラム</h4>
+                        <p class="text-gray-600 text-sm">
+                            五感を使った様々な体験活動を企画・実施。
+                            子どもたちの笑顔が私たちの原動力です。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="activity-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <div class="h-64 overflow-hidden">
+                        <img src="こども館での活動/7c50d3e779cb0434be5d2bec02de240c.jpg"
+                             alt="子ども館での活動風景3"
+                             class="w-full h-full object-cover image-hover">
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg mb-2">地域との連携</h4>
+                        <p class="text-gray-600 text-sm">
+                            地域の大人たちとも協力しながら、
+                            みんなで子どもたちを支える仕組みづくりを進めています。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 100人お米作りプロジェクト -->
+    <section class="py-16 bg-green-50">
+        <div class="container mx-auto px-4">
+            <h3 class="text-3xl font-bold text-center mb-12">100人お米作りプロジェクト</h3>
+            <p class="text-xl text-center mb-8 text-gray-700">
+                地域の子どもたち100人と共に、田んぼで米作りを体験。<br>
+                土に触れ、汗を流し、収穫の喜びを分かち合いました。
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <!-- 第1回の活動 -->
+                <div>
+                    <h4 class="text-2xl font-bold mb-4">第1回 田植え体験</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <img src="100人お米作りプロジェクト_第1回/DSC06872.JPG"
+                                 alt="田植え体験1"
+                                 class="w-full h-48 object-cover image-hover">
+                        </div>
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <img src="100人お米作りプロジェクト_第1回/DSC06873.JPG"
+                                 alt="田植え体験2"
+                                 class="w-full h-48 object-cover image-hover">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第2回の活動 -->
+                <div>
+                    <h4 class="text-2xl font-bold mb-4">第2回 稲刈り・収穫体験</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <img src="100人お米作りプロジェクト_第2回/DSC06892.JPG"
+                                 alt="稲刈り体験1"
+                                 class="w-full h-48 object-cover image-hover">
+                        </div>
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <img src="100人お米作りプロジェクト_第2回/DSC06893.JPG"
+                                 alt="稲刈り体験2"
+                                 class="w-full h-48 object-cover image-hover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    <i class="fas fa-quote-left text-green-500 text-2xl mr-2"></i>
+                    このプロジェクトを通じて、子どもたちは食べ物の大切さ、
+                    仲間と協力することの楽しさ、そして自然とのつながりを学びました。
+                    泥だらけになりながらも、みんなの笑顔が輝いていたことが印象的でした。
+                    <i class="fas fa-quote-right text-green-500 text-2xl ml-2"></i>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 活動の成果と学び -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h3 class="text-3xl font-bold text-center mb-12">活動を通じて学んだこと</h3>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="learning-card bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl">
+                        <i class="fas fa-lightbulb text-4xl text-green-500 mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">見えない格差の存在</h4>
+                        <p class="text-gray-700">
+                            経済格差だけでなく、体験格差、関係性の格差。
+                            表面からは見えない様々な分断が子どもたちの間に存在していることを知りました。
+                        </p>
+                    </div>
+
+                    <div class="learning-card bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl">
+                        <i class="fas fa-hands-helping text-4xl text-orange-500 mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">高校生の可能性</h4>
+                        <p class="text-gray-700">
+                            子どもと大人の間にいる高校生だからこそ、
+                            両者の架け橋となり、新しい関係性を築けることを実感しました。
+                        </p>
+                    </div>
+
+                    <div class="learning-card bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl">
+                        <i class="fas fa-seedling text-4xl text-blue-500 mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">五感体験の重要性</h4>
+                        <p class="text-gray-700">
+                            デジタル時代だからこそ、土に触れ、匂いを感じ、
+                            みんなで収穫を喜ぶリアルな体験が心を繋ぐことを発見しました。
+                        </p>
+                    </div>
+
+                    <div class="learning-card bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl">
+                        <i class="fas fa-heart text-4xl text-purple-500 mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">共感力の育成</h4>
+                        <p class="text-gray-700">
+                            異なる背景を持つ子どもたちが共に活動することで、
+                            自然と相手を理解し、思いやる心が育つことを目撃しました。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-16 gradient-green text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-3xl font-bold mb-6">私たちと一緒に活動しませんか？</h3>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">
+                地域共生ゼミでは、一緒に活動してくれる仲間を募集しています。
+                あなたの力で、子どもたちの未来を変えてみませんか？
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="contact.html" class="bg-white text-green-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition">
+                    お問い合わせはこちら
+                </a>
+                <a href="tsuchinowa.html" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-green-600 transition">
+                    つちのわプログラムを見る
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p class="mb-4">雲雀丘学園高等学校 地域共生ゼミ</p>
+                <div class="flex justify-center space-x-6 mb-4">
+                    <a href="main.html" class="hover:text-green-400">ホーム</a>
+                    <a href="presenters.html" class="hover:text-green-400">メンバー紹介</a>
+                    <a href="contact.html" class="hover:text-green-400">お問い合わせ</a>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    © 2025 雲雀丘学園高等学校 地域共生ゼミ. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // モバイルメニュー
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+
+        closeMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        // GSAP アニメーション
+        gsap.registerPlugin(ScrollTrigger);
+
+        // フェードイン
+        gsap.utils.toArray('.fade-in').forEach(element => {
+            gsap.from(element, {
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        // カードアニメーション
+        gsap.utils.toArray('.activity-card, .learning-card').forEach((card, i) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                delay: i * 0.1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%"
+                }
+            });
+        });
+
+        // タイムラインアニメーション
+        gsap.utils.toArray('.timeline-item').forEach((item, i) => {
+            gsap.from(item, {
+                opacity: 0,
+                x: -30,
+                duration: 0.8,
+                delay: i * 0.2,
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 80%"
+                }
+            });
+        });
+    </script>
+</body>
+</html>
